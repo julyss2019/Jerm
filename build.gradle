@@ -33,6 +33,6 @@ tasks.register('buildCore', GradleBuild) {
     tasks = [':core:clean', ':core:build']
 }
 
-tasks.register('buildAPI', GradleBuild) {
-    tasks = [':api:clean', ':api:build']
+tasks.register('publishAPI', GradleBuild) {
+    tasks = [':api:clean', ':api:publish']
 }
