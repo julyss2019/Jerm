@@ -10,9 +10,9 @@ tasks.named('build') {
 
 publishing {
     publications {
-        api(MavenPublication) {
-            from components.java
+        maven(MavenPublication) {
             artifactId "jerm-api"
+            from components.java
         }
     }
 
