@@ -1,0 +1,22 @@
+plugins {
+    id 'maven-publish'
+}
+
+version = '1.0.0'
+
+tasks.named('build') {
+    dependsOn publishToMavenLocal
+}
+
+publishing {
+    publications {
+        api(MavenPublication) {
+            from components.java
+            artifactId "jerm-api"
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}

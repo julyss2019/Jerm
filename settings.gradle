@@ -1,0 +1,5 @@
+rootProject.name = 'Jerm'
+
+include 'api'
+include 'core'
+

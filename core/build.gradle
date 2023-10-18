@@ -1,0 +1,29 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+version = '1.0.1'
+
+dependencies {
+    implementation project(':api')
+    compileOnly 'com.void01.bukkit:void-framework-bukkit-api:1.0.0'
+    compileOnly 'com.void01.bukkit:void-framework-bukkit-api-legacy:1.0.0'
+}
+
+shadowJar {
+    String prefix = 'com.void01.bukkit.jerm.core.libs.'
+
+    archiveBaseName.set(rootProject.name)
+    archiveClassifier.set('')
+
+    relocate('kotlin', prefix + 'kotlin')
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from "src/main/resources/plugin.yml"
+    filter(ReplaceTokens, beginToken: '${', endToken: '}', tokens: ["version": project.version])
+}
+
+tasks.named('build') {
+    dependsOn shadowJar
+}
