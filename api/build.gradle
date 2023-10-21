@@ -2,7 +2,7 @@ plugins {
     id 'maven-publish'
 }
 
-version = '1.0.0'
+version = '1.0.1'
 
 tasks.named('build') {
     dependsOn publishToMavenLocal
@@ -11,7 +11,7 @@ tasks.named('build') {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId "jerm-api"
+            artifactId 'jerm-api'
             from components.java
         }
     }
