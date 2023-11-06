@@ -28,7 +28,6 @@ allprojects {
     }
 }
 
-
 tasks.register('buildCore', GradleBuild) {
     tasks = [':core:clean', ':core:build']
 }
