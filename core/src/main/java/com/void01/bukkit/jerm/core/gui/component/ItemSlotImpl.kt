@@ -2,32 +2,51 @@ package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import com.void01.bukkit.jerm.api.common.gui.Gui
+import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
+import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
 
 class ItemSlotImpl(gui: Gui, handle: GermGuiSlot) : BaseComponent<GermGuiSlot>(gui, handle), ItemSlot {
-    override fun getItem(): ItemStack? {
-        return handle.itemStack
+    override var item: ItemStack?
+        get() = handle.itemStack
+        set(value) {
+            binding = null
+            handle.itemStack = value
+        }
+    override var itemStack: ItemStack?
+        get() = handle.itemStack
+        set(value) {
+            binding = null // 设置了 ItemStack 就让 binding 失效
+            handle.itemStack = value
+        }
+    override var interactive: Boolean
+        get() = handle.isInteract
+        set(value) {
+            handle.isInteract = value
+        }
+    override var binding: String?
+        get() {
+            itemStack = null  // 设置了 binding 就让 ItemStack 失效
+            return if (handle.identity == handle.indexName) null else handle.indexName // 不应该默认 binding 为索引名
+        }
+        set(value) {
+            handle.identity = value ?: handle.indexName // 萌芽 bug，不允许为空
+        }
+
+    @Deprecated("弃用", ReplaceWith("binding"))
+    override fun setSlotId(id: String?) {
+        handle.identity = id
     }
 
-    override fun setItem(itemStack: ItemStack) {
-        handle.itemStack = itemStack
-    }
-
-    override fun setInteractive(boolean: Boolean) {
-        handle.setInteract(boolean)
-    }
-
-    override fun isInteractive(): Boolean {
-        return handle.isInteract
-    }
-
-    override fun getSlotId(id: String): String? {
+    @Deprecated("弃用", ReplaceWith("binding"))
+    override fun getSlotId(): String? {
         return handle.identity
     }
 
-    override fun setSlotId(id: String?) {
-        // Fix: 萌芽槽位 ID 不允许为 null，默认 ID 为索引名
-        handle.identity = id ?: handle.indexName
+    override fun clone(): ItemSlot {
+        return ItemSlotImpl(gui, GermUtils.cloneGuiPart(handle).apply {
+            identity = binding
+        })
     }
 }

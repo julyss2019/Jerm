@@ -22,14 +22,14 @@ class GuiListener(plugin: JermPlugin) : Listener {
         val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
         val usingGui = jermPlayer.getJermUsingGuiByHandle(handle) as GuiImpl? ?: return
-        val component = usingGui.getComponentByHandle(componentHandle) ?: return
+        val component = usingGui.getComponent(componentHandle.indexName, Component::class.java) ?: return
         val componentClickType = when (event.clickType) {
             GermGuiScreen.ClickType.LEFT_CLICK -> Component.ClickType.LEFT
             GermGuiScreen.ClickType.RIGHT_CLICK -> Component.ClickType.RIGHT
             else -> return
         }
 
-        component.getOnClickListener()?.onClick(componentClickType)
+        component.onClickListener?.onClick(componentClickType)
     }
 
     @EventHandler

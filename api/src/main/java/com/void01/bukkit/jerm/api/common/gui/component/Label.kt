@@ -12,4 +12,6 @@ interface Label : Component<GermGuiLabel> {
     fun setText(text: String) {
         setTexts(listOf(text))
     }
+
+    public override fun clone(): Label
 }

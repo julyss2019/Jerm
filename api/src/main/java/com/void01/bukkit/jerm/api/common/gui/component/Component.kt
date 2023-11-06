@@ -8,6 +8,10 @@ import com.void01.bukkit.jerm.api.common.gui.Gui
 interface Component<T : GermGuiPart<*>> : Cloneable {
     val gui: Gui
     val handle: T
+    var id: String
+    var tooltips: List<String>
+    var enabled: Boolean
+    var onClickListener: OnClickListener?
 
     enum class ClickType {
         LEFT, RIGHT
@@ -19,25 +23,13 @@ interface Component<T : GermGuiPart<*>> : Cloneable {
 
     fun performClick(clickType: ClickType)
 
-    fun getTooltips(): List<String>
-
-    fun setTooltips(tooltips: List<String>)
-
-    fun getId(): String
-
     fun disable() {
-        setEnabled(false)
+        enabled = false
     }
 
     fun enable() {
-        setEnabled(true)
+        enabled = true
     }
 
-    fun setEnabled(boolean: Boolean)
-
-    fun isEnabled(): Boolean
-
-    fun setOnClickListener(listener: OnClickListener?)
-
-    fun getOnClickListener(): OnClickListener?
+    override fun clone(): Component<T>
 }

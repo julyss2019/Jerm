@@ -1,16 +1,16 @@
 package com.void01.bukkit.jerm.core.gui.component
 
+import com.germ.germplugin.api.dynamic.gui.GermGuiCanvas
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
-import com.germ.germplugin.api.dynamic.gui.GermGuiScroll
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
+import com.void01.bukkit.jerm.api.common.gui.component.Canvas
 import com.void01.bukkit.jerm.api.common.gui.component.Component
-import com.void01.bukkit.jerm.api.common.gui.component.ScrollBox
 import com.void01.bukkit.jerm.core.gui.ComponentGroupImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
-    BaseComponent<GermGuiScroll>(gui, handle), ComponentGroup, ScrollBox {
+class CanvasImpl(override val gui: Gui, handle: GermGuiCanvas) : BaseComponent<GermGuiCanvas>(gui, handle),
+    ComponentGroup, Canvas {
     private val componentGroup = ComponentGroupImpl(gui, handle)
     override var components: List<Component<*>>
         get() = componentGroup.components
@@ -46,7 +46,7 @@ class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
         return componentGroup.existsComponent(id)
     }
 
-    override fun clone(): ScrollBox {
-        return ScrollBoxImpl(gui, GermUtils.cloneGuiPart(handle))
+    override fun clone(): Canvas {
+        return CanvasImpl(gui, GermUtils.cloneGuiPart(handle))
     }
 }

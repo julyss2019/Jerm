@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 
 interface Gui : Cloneable, ComponentGroup {
     val id: String
-    override val handle: GermGuiScreen
+    val handle: GermGuiScreen
 
     fun openAsGui(bukkitPlayer: Player) = openAsGui(bukkitPlayer, true)
 

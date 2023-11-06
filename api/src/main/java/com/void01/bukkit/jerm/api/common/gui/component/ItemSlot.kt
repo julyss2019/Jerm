@@ -4,23 +4,25 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import org.bukkit.inventory.ItemStack
 
 interface ItemSlot : Component<GermGuiSlot> {
-    fun getItem() : ItemStack?
+    @Deprecated("改为 itemStack")
+    var item: ItemStack?
+    var itemStack : ItemStack?
+    var binding : String?
+    var interactive : Boolean
 
-    fun setItem(itemStack: ItemStack)
+    @Deprecated("改为 slotItemBinding(String)")
+    fun setSlotId(id: String?)
 
-    fun setSlotId(id : String?)
-
-    fun getSlotId(id : String) : String?
+    @Deprecated("改为 getItemBinding()")
+    fun getSlotId(): String?
 
     fun disableInteractive() {
-        setInteractive(false)
+        interactive = false
     }
 
     fun enableInteractive() {
-        setInteractive(true)
+        interactive = true
     }
 
-    fun setInteractive(boolean: Boolean)
-
-    fun isInteractive() : Boolean
+    public override fun clone(): ItemSlot
 }

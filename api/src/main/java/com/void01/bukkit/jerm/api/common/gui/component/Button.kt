@@ -11,17 +11,12 @@ interface Button : Component<GermGuiButton> {
         fun onClick(event: ClickType, shift: Boolean)
     }
 
-    override val handle: GermGuiButton
+    var texts: List<String>
+    var onButtonClickListener: OnClickListener?
 
     fun performButtonClick(clickType: ClickType, shift: Boolean) {
-        getOnButtonClickListener()?.onClick(clickType, shift)
+        onButtonClickListener?.onClick(clickType, shift)
     }
 
-    fun getTexts(): List<String>
-
-    fun setTexts(texts: List<String>)
-
-    fun setOnButtonClickListener(listener: OnClickListener?)
-
-    fun getOnButtonClickListener(): OnClickListener?
+    public override fun clone(): Button
 }
