@@ -11,6 +11,10 @@ interface Gui : Cloneable, ComponentGroup {
         fun onClose()
     }
 
+    interface OnOpenListener {
+        fun onOpen()
+    }
+
     fun openAsGui(bukkitPlayer: Player) = openAsGui(bukkitPlayer, true)
 
     fun openAsGui(bukkitPlayer: Player, cover: Boolean)
