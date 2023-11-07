@@ -6,7 +6,7 @@ import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 
-class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) : ComponentGroup {
+class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartContainer) : ComponentGroup {
     override var components: List<Component<*>>
         get() = componentMap.values.toList()
         set(value) {
@@ -19,8 +19,12 @@ class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) :
 
     init {
         containerHandle.guiParts.forEach {
-            addComponent(it)
+            addComponent0(HandleToComponentConverter.convert(gui, it))
         }
+    }
+
+    private fun addComponent0(component: Component<*>) {
+        componentMap[component.id] = component
     }
 
     override fun existsComponent(id: String): Boolean {
@@ -51,7 +55,7 @@ class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) :
         }
 
         containerHandle.addGuiPart(component.handle)
-        componentMap[component.id] = component
+        addComponent0(component)
     }
 
     override fun addComponent(componentHandle: GermGuiPart<*>) {
