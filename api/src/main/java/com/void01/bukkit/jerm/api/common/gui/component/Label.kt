@@ -14,6 +14,11 @@ interface Label : Component<GermGuiLabel> {
     fun removeTexts() {
         setTexts(emptyList())
     }
+
+    @Deprecated(
+        message = "使用 addText 或 setTexts",
+        replaceWith = ReplaceWith("addText(String) or setTexts(List<String>)")
+    )
     fun setText(text: String) {
         setTexts(listOf(text))
     }
