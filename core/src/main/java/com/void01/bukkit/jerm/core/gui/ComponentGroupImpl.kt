@@ -41,7 +41,7 @@ class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartCont
     }
 
     override fun <T : Component<*>> getComponent(id: String, clazz: Class<T>): T? {
-        return componentMap[id] as T
+        return componentMap[id] as T?
     }
 
     override fun removeComponent(id: String) {
