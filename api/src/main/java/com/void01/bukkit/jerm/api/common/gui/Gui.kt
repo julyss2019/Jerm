@@ -7,6 +7,10 @@ interface Gui : Cloneable, ComponentGroup {
     val id: String
     val handle: GermGuiScreen
 
+    interface OnCloseListener {
+        fun onClose()
+    }
+
     fun openAsGui(bukkitPlayer: Player) = openAsGui(bukkitPlayer, true)
 
     fun openAsGui(bukkitPlayer: Player, cover: Boolean)
