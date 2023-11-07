@@ -1,8 +1,10 @@
 package com.void01.bukkit.jerm.core.listener
 
+import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.germ.germplugin.api.event.gui.GermGuiClickEvent
 import com.germ.germplugin.api.event.gui.GermGuiClosedEvent
+import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
@@ -15,21 +17,37 @@ class GuiListener(plugin: JermPlugin) : Listener {
 
     @EventHandler
     fun onGermGuiClickEvent(event: GermGuiClickEvent) {
-        val handle = event.clickedGuiScreen
-        val componentHandle = event.clickedPart ?: return
-
         val bukkitPlayer = event.player
         val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
-        val usingGui = jermPlayer.getJermUsingGuiByHandle(handle) as GuiImpl? ?: return
-        val component = usingGui.getComponent(componentHandle.indexName, Component::class.java) ?: return
-        val componentClickType = when (event.clickType) {
+        val guiHandle = event.clickedGuiScreen
+        val componentHandle = event.clickedPart ?: return
+
+        val usingGui = jermPlayer.getJermUsingGuiByHandle(guiHandle) as GuiImpl? ?: return
+        // 从 handle 反向获取所有父控件
+        val parents = mutableListOf<GermGuiPart<*>>()
+        var tmp: GermGuiPart<*> = componentHandle
+
+        while (tmp.parentPart != null) {
+            tmp = tmp.parentPart
+            parents.add(0, tmp)
+        }
+
+        var handleComponentGroup: ComponentGroup = usingGui
+
+        // 一层层获取控件的 ComponentGroup
+        parents.forEach {
+            handleComponentGroup = handleComponentGroup.getComponentOrThrow(it.indexName, Component::class.java) as ComponentGroup
+        }
+
+        val clicked = handleComponentGroup.getComponentOrThrow(componentHandle.indexName, Component::class.java)
+        val clickType = when (event.clickType) {
             GermGuiScreen.ClickType.LEFT_CLICK -> Component.ClickType.LEFT
             GermGuiScreen.ClickType.RIGHT_CLICK -> Component.ClickType.RIGHT
             else -> return
         }
 
-        component.onClickListener?.onClick(componentClickType)
+        clicked.onClickListener?.onClick(clickType)
     }
 
     @EventHandler
