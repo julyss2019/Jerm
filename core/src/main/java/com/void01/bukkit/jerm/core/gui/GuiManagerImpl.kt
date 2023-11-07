@@ -35,6 +35,7 @@ class GuiManagerImpl(plugin: JermPlugin) : GuiManager {
     fun load() {
         GermUtils.getGuiFolder()
             .walk()
+            .filter { it.isFile }
             .flatMap {
                 guiParser.parseGuis(it)
             }
