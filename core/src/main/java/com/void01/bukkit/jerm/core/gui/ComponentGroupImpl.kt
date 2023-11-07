@@ -46,7 +46,7 @@ class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) :
     }
 
     override fun addComponent(component: Component<*>) {
-        require(existsComponent(component.id)) {
+        require(!existsComponent(component.id)) {
             "Component already exists with id: ${component.id}"
         }
 
