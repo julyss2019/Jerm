@@ -11,6 +11,9 @@ interface Label : Component<GermGuiLabel> {
 
     fun addText(text: String)
 
+    fun removeTexts() {
+        setTexts(emptyList())
+    }
     fun setText(text: String) {
         setTexts(listOf(text))
     }
