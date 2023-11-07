@@ -37,7 +37,11 @@ class GuiManagerImpl(plugin: JermPlugin) : GuiManager {
             .walk()
             .filter { it.isFile }
             .flatMap {
-                guiParser.parseGuis(it)
+                try {
+                    guiParser.parseGuis(it)
+                } catch (ex: Exception) {
+                    throw RuntimeException("在载入 ${it.absolutePath} 时出现了异常", ex)
+                }
             }
             .forEach {
                 guiMap[it.id] = it
