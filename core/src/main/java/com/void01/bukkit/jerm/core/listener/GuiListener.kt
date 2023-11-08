@@ -23,7 +23,7 @@ class GuiListener(plugin: JermPlugin) : Listener {
         val guiHandle = event.clickedGuiScreen
         val componentHandle = event.clickedPart ?: return
 
-        val usingGui = jermPlayer.getJermUsingGuiByHandle(guiHandle) as GuiImpl? ?: return
+        val usingGui = jermPlayer.getUsingGui(guiHandle) as GuiImpl? ?: return
         // 从 handle 反向获取所有父控件
         val parents = mutableListOf<GermGuiPart<*>>()
         var tmp: GermGuiPart<*> = componentHandle
@@ -55,6 +55,6 @@ class GuiListener(plugin: JermPlugin) : Listener {
         val bukkitPlayer = event.player
         val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
-        jermPlayer.removeJermUsingGuiByHandle(event.germGuiScreen)
+        jermPlayer.removeUsingGui(event.germGuiScreen)
     }
 }

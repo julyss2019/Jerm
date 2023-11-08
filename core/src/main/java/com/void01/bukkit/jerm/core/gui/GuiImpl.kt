@@ -35,13 +35,13 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
             handle.openChildGui(bukkitPlayer)
         }
 
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addJermUsingGui(this)
+        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
         handle.openHud(bukkitPlayer)
 
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addJermUsingGui(this)
+        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
     }
 
     override fun close() {
