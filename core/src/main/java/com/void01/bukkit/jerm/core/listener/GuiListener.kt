@@ -51,7 +51,7 @@ class GuiListener(plugin: JermPlugin) : Listener {
     }
 
     @EventHandler
-    fun onGermGuiOpenEvent(event: GermGuiClosedEvent) {
+    fun onClose(event: GermGuiClosedEvent) {
         val bukkitPlayer = event.player
         val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
