@@ -11,6 +11,7 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 
 class CanvasImpl(override val gui: Gui, handle: GermGuiCanvas) : BaseComponent<GermGuiCanvas>(gui, handle),
     ComponentGroup, Canvas {
+    override val origin: Canvas by lazy { clone() }
     private val componentGroup = ComponentGroupImpl(gui, handle)
     override var components: List<Component<*>>
         get() = componentGroup.components

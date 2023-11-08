@@ -11,6 +11,7 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 
 class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
     BaseComponent<GermGuiScroll>(gui, handle), ComponentGroup, ScrollBox {
+    override val origin: ScrollBox by lazy { clone() }
     private val componentGroup = ComponentGroupImpl(gui, handle)
     override var components: List<Component<*>>
         get() = componentGroup.components

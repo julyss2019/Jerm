@@ -6,6 +6,7 @@ import com.void01.bukkit.jerm.api.common.gui.Gui
 
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
 interface Component<T : GermGuiPart<*>> : Cloneable {
+    val origin: Component<T>
     val gui: Gui
     val handle: T
     var id: String

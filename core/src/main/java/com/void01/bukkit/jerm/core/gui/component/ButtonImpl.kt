@@ -6,6 +6,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.core.util.GermUtils
 
 class ButtonImpl(gui: Gui, handle: GermGuiButton) : BaseComponent<GermGuiButton>(gui, handle), Button {
+    override val origin: Button by lazy { clone() }
     override var texts: List<String>
         get() = handle.texts
         set(value) {

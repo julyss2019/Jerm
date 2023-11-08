@@ -6,7 +6,9 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 
 class UnsupportedComponent(gui: Gui, handle: GermGuiPart<*>) :
     BaseComponent<GermGuiPart<*>>(gui, handle) {
-    override fun clone(): Component<GermGuiPart<*>> {
+    override val origin: UnsupportedComponent by lazy { clone() }
+
+    override fun clone(): UnsupportedComponent {
         return UnsupportedComponent(gui, GermUtils.cloneGuiPart(handle))
     }
 }

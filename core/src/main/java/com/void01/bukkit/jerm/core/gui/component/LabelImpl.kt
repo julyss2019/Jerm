@@ -6,6 +6,8 @@ import com.void01.bukkit.jerm.api.common.gui.component.Label
 import com.void01.bukkit.jerm.core.util.GermUtils
 
 class LabelImpl(gui: Gui, handle: GermGuiLabel) : BaseComponent<GermGuiLabel>(gui, handle), Label {
+    override val origin: Label by lazy { clone() }
+
     override fun getTexts(): List<String> {
         return handle.texts
     }

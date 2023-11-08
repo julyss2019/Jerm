@@ -6,7 +6,9 @@ import com.void01.bukkit.jerm.api.common.gui.component.Texture
 import com.void01.bukkit.jerm.core.util.GermUtils
 
 class TextureImpl(gui: Gui, handle: GermGuiTexture) : BaseComponent<GermGuiTexture>(gui, handle), Texture {
-    override fun clone(): Component<GermGuiTexture> {
+    override val origin: Texture by lazy { clone() }
+
+    override fun clone(): Texture {
         return TextureImpl(gui, GermUtils.cloneGuiPart(handle))
     }
 }
