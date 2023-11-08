@@ -25,7 +25,7 @@ class JermPlayerImpl(val uuid: UUID, val plugin: JermPlugin) : JermPlayer {
 
     fun removeUsingGui(handle: GermGuiScreen) {
         usingGuis.removeIf {
-            it.id == handle.guiName
+            it.handle == handle
         }
     }
 
