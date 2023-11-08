@@ -7,25 +7,24 @@ import com.github.julyss2019.bukkit.voidframework.common.Validator
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import com.void01.bukkit.jerm.core.JermPlugin
-import com.void01.bukkit.jerm.core.gui.GuiImpl
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
 class JermPlayerImpl(val uuid: UUID, val plugin: JermPlugin) : JermPlayer {
     override var isScreenDebugEnabled = false
-    private val jermUsingGuis = mutableSetOf<Gui>()
+    private val usingGuis = mutableListOf<Gui>()
 
-    fun getJermUsingGuiByHandle(handle: GermGuiScreen): Gui? {
-        return jermUsingGuis.firstOrNull { it.id == handle.guiName }
+    fun getUsingGui(handle: GermGuiScreen): Gui? {
+        return usingGuis.firstOrNull { it.id == handle.guiName }
     }
 
-    fun addJermUsingGui(gui: Gui) {
-        jermUsingGuis.add(gui)
+    fun addUsingGui(gui: Gui) {
+        usingGuis.add(gui)
     }
 
-    fun removeJermUsingGuiByHandle(handle: GermGuiScreen) {
-        jermUsingGuis.removeIf {
+    fun removeUsingGui(handle: GermGuiScreen) {
+        usingGuis.removeIf {
             it.id == handle.guiName
         }
     }
