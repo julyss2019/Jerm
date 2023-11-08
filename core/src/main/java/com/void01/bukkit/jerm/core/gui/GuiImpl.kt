@@ -29,19 +29,18 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
      * @param cover 覆盖
      */
     override fun openAsGui(bukkitPlayer: Player, cover: Boolean) {
+        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+
         if (cover) {
             handle.openGui(bukkitPlayer)
         } else {
             handle.openChildGui(bukkitPlayer)
         }
-
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
-        handle.openHud(bukkitPlayer)
-
         (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+        handle.openHud(bukkitPlayer)
     }
 
     override fun close() {

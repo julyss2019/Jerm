@@ -4,6 +4,7 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.germ.germplugin.api.event.gui.GermGuiClickEvent
 import com.germ.germplugin.api.event.gui.GermGuiClosedEvent
+import com.germ.germplugin.api.event.gui.GermGuiOpenedEvent
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.core.JermPlugin
@@ -12,7 +13,7 @@ import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class GuiListener(plugin: JermPlugin) : Listener {
+class GuiListener(private val plugin: JermPlugin) : Listener {
     private val playerManager = plugin.playerManager
 
     @EventHandler
@@ -51,10 +52,26 @@ class GuiListener(plugin: JermPlugin) : Listener {
     }
 
     @EventHandler
-    fun onClose(event: GermGuiClosedEvent) {
+    fun onOpen(event: GermGuiOpenedEvent) {
+        val handle = event.germGuiScreen
         val bukkitPlayer = event.player
         val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
+        // 这里仅处理没有使用 Jerm 打开的 GUI，将为其手动实例化一个 GUI
+        if (jermPlayer.getUsingGui(handle) == null) {
+            jermPlayer.addUsingGui(GuiImpl(handle, null, plugin))
+        } else {
+            jermPlayer.getUsingGui(handle)?.onOpenListener?.onOpen()
+        }
+    }
+
+    @EventHandler
+    fun onClose(event: GermGuiClosedEvent) {
+        val handle = event.germGuiScreen
+        val bukkitPlayer = event.player
+        val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+
+        jermPlayer.getUsingGui(handle)?.onCloseListener?.onClose()
         jermPlayer.removeUsingGui(event.germGuiScreen)
     }
 }
