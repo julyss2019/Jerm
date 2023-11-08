@@ -6,6 +6,8 @@ import org.bukkit.entity.Player
 interface Gui : Cloneable, ComponentGroup {
     val id: String
     val handle: GermGuiScreen
+    var onCloseListener : OnCloseListener?
+    var onOpenListener: OnOpenListener?
 
     interface OnCloseListener {
         fun onClose()

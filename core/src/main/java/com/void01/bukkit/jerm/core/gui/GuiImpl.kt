@@ -16,12 +16,13 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         set(value) {
             componentGroup.components = value
         }
+    override val id: String = handle.guiName
+    override var onCloseListener: Gui.OnCloseListener? = null
+    override var onOpenListener: Gui.OnOpenListener? = null
 
     override fun clearComponents() {
         componentGroup.clearComponents()
     }
-
-    override val id: String = handle.guiName
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
