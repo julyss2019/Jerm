@@ -36,10 +36,7 @@ class JermPlayerImpl(val uuid: UUID, val plugin: JermPlugin) : JermPlayer {
     override fun getUsingGuis(): List<Gui> {
         checkOnline()
 
-        return GuiManager.getOpenedAllGui(getBukkitPlayer())
-            .map {
-                GuiImpl(it, null, plugin)
-            }
+        return usingGuis.toList()
     }
 
     override fun getBukkitPlayer(): Player? = Bukkit.getPlayer(uuid)
