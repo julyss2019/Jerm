@@ -1,16 +1,59 @@
 package com.void01.bukkit.jerm.core.gui.component
 
+import com.germ.germplugin.api.dynamic.gui.GermGuiButton
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScroll
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
+import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.ScrollBox
 import com.void01.bukkit.jerm.core.gui.ComponentGroupImpl
+import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
 import com.void01.bukkit.jerm.core.util.GermUtils
 
 class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
     BaseComponent<GermGuiScroll>(gui, handle), ComponentGroup, ScrollBox {
+
+    class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar {
+        override val origin: Component<GermGuiButton>
+            get() = button.origin
+        override val gui: Gui
+            get() = button.gui
+        override val handle: GermGuiButton
+            get() = button.handle
+        override var id: String
+            get() = button.id
+            set(value) {
+                button.id = value
+            }
+        override var tooltips: List<String>
+            get() = button.tooltips
+            set(value) {
+                button.tooltips = value
+            }
+        override var enabled: Boolean
+            get() = button.enabled
+            set(value) {
+                button.enabled = value
+            }
+        override var onClickListener: Component.OnClickListener?
+            get() = button.onClickListener
+            set(value) {
+                button.onClickListener = value
+            }
+
+        override fun performClick(clickType: Component.ClickType) {
+            button.performClick(clickType)
+        }
+
+        override fun clone(): ScrollBox.ScrollBar {
+            return ScrollBarImpl(button.clone(), scrollBox)
+        }
+    }
+
+    override var horizontalScrollBar: ScrollBox.ScrollBar? = null
+    override var verticalScrollBar: ScrollBox.ScrollBar? = null
     override val origin: ScrollBox by lazy { clone() }
     private val componentGroup = ComponentGroupImpl(gui, handle)
     override var components: List<Component<*>>
@@ -18,6 +61,18 @@ class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
         set(value) {
             componentGroup.components = value
         }
+
+    init {
+        if (handle.sliderV != null) {
+            verticalScrollBar =
+                ScrollBarImpl(HandleToComponentConverter.convert(gui, handle.sliderV) as Button, this)
+        }
+
+        if (handle.sliderH != null) {
+            horizontalScrollBar =
+                ScrollBarImpl(HandleToComponentConverter.convert(gui, handle.sliderH) as Button, this)
+        }
+    }
 
     override fun clearComponents() {
         componentGroup.clearComponents()
