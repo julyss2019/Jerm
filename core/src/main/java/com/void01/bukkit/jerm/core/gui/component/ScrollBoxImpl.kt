@@ -14,38 +14,8 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 
 class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
     BaseComponent<GermGuiScroll>(gui, handle), ComponentGroup, ScrollBox {
-
-    class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar {
-        override val origin: Component<GermGuiButton>
-            get() = button.origin
-        override val gui: Gui
-            get() = button.gui
-        override val handle: GermGuiButton
-            get() = button.handle
-        override var id: String
-            get() = button.id
-            set(value) {
-                button.id = value
-            }
-        override var tooltips: List<String>
-            get() = button.tooltips
-            set(value) {
-                button.tooltips = value
-            }
-        override var enabled: Boolean
-            get() = button.enabled
-            set(value) {
-                button.enabled = value
-            }
-        override var onClickListener: Component.OnClickListener?
-            get() = button.onClickListener
-            set(value) {
-                button.onClickListener = value
-            }
-
-        override fun performClick(clickType: Component.ClickType) {
-            button.performClick(clickType)
-        }
+    class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar,
+        Component<GermGuiButton> by button {
 
         override fun clone(): ScrollBox.ScrollBar {
             return ScrollBarImpl(button.clone(), scrollBox)
