@@ -75,4 +75,16 @@ class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
     override fun clone(): ScrollBox {
         return ScrollBoxImpl(gui, GermUtils.cloneGuiPart(handle))
     }
+
+    override fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>? {
+        if (id == horizontalScrollBar?.id) {
+            return horizontalScrollBar
+        }
+
+        if (id == verticalScrollBar?.id) {
+            return verticalScrollBar
+        }
+
+        return null
+    }
 }
