@@ -1,11 +1,13 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiLabel
+import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Label
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class LabelImpl(gui: Gui, handle: GermGuiLabel) : BaseComponent<GermGuiLabel>(gui, handle), Label {
+class LabelImpl(gui: Gui, group: ComponentGroup, handle: GermGuiLabel) :
+    BaseComponent<GermGuiLabel>(gui, group, handle), Label {
     override val origin: Label by lazy { clone() }
 
     override fun getTexts(): List<String> {
@@ -21,6 +23,6 @@ class LabelImpl(gui: Gui, handle: GermGuiLabel) : BaseComponent<GermGuiLabel>(gu
     }
 
     override fun clone(): Label {
-        return LabelImpl(gui, GermUtils.cloneGuiPart(handle))
+        return LabelImpl(gui, group, GermUtils.cloneGuiPart(handle))
     }
 }

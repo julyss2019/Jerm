@@ -1,11 +1,13 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
+import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ButtonImpl(gui: Gui, handle: GermGuiButton) : BaseComponent<GermGuiButton>(gui, handle), Button {
+class ButtonImpl(gui: Gui, group: ComponentGroup, handle: GermGuiButton) :
+    BaseComponent<GermGuiButton>(gui, group, handle), Button {
     override val origin: Button by lazy { clone() }
     override var texts: List<String>
         get() = handle.texts
@@ -38,6 +40,6 @@ class ButtonImpl(gui: Gui, handle: GermGuiButton) : BaseComponent<GermGuiButton>
     }
 
     override fun clone(): Button {
-        return ButtonImpl(gui, GermUtils.cloneGuiPart(handle))
+        return ButtonImpl(gui, group, GermUtils.cloneGuiPart(handle))
     }
 }

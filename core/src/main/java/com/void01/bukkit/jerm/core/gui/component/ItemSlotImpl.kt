@@ -1,12 +1,14 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
+import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
 
-class ItemSlotImpl(gui: Gui, handle: GermGuiSlot) : BaseComponent<GermGuiSlot>(gui, handle), ItemSlot {
+class ItemSlotImpl(gui: Gui, group: ComponentGroup, handle: GermGuiSlot) :
+    BaseComponent<GermGuiSlot>(gui, group, handle), ItemSlot {
     override val origin: ItemSlot by lazy { clone() }
     override var item: ItemStack?
         get() = handle.itemStack
@@ -45,7 +47,7 @@ class ItemSlotImpl(gui: Gui, handle: GermGuiSlot) : BaseComponent<GermGuiSlot>(g
     }
 
     override fun clone(): ItemSlot {
-        return ItemSlotImpl(gui, GermUtils.cloneGuiPart(handle).apply {
+        return ItemSlotImpl(gui, group, GermUtils.cloneGuiPart(handle).apply {
             identity = binding
         })
     }

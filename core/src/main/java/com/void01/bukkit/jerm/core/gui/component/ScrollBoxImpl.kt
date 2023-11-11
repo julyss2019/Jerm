@@ -12,8 +12,8 @@ import com.void01.bukkit.jerm.core.gui.ComponentGroupImpl
 import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
-    BaseComponent<GermGuiScroll>(gui, handle), ComponentGroup, ScrollBox {
+class ScrollBoxImpl(gui: Gui, group: ComponentGroup, handle: GermGuiScroll) :
+    BaseComponent<GermGuiScroll>(gui, group, handle), ComponentGroup, ScrollBox {
     class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar,
         Component<GermGuiButton> by button {
 
@@ -35,12 +35,12 @@ class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
     init {
         if (handle.sliderV != null) {
             verticalScrollBar =
-                ScrollBarImpl(HandleToComponentConverter.convert(gui, handle.sliderV) as Button, this)
+                ScrollBarImpl(HandleToComponentConverter.convert(gui, group, handle.sliderV) as Button, this)
         }
 
         if (handle.sliderH != null) {
             horizontalScrollBar =
-                ScrollBarImpl(HandleToComponentConverter.convert(gui, handle.sliderH) as Button, this)
+                ScrollBarImpl(HandleToComponentConverter.convert(gui, group, handle.sliderH) as Button, this)
         }
     }
 
@@ -73,7 +73,7 @@ class ScrollBoxImpl(override val gui: Gui, override val handle: GermGuiScroll) :
     }
 
     override fun clone(): ScrollBox {
-        return ScrollBoxImpl(gui, GermUtils.cloneGuiPart(handle))
+        return ScrollBoxImpl(gui, group, GermUtils.cloneGuiPart(handle))
     }
 
     override fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>? {
