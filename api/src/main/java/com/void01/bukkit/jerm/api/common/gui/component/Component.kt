@@ -32,5 +32,11 @@ interface Component<T : GermGuiPart<*>> : Cloneable {
         enabled = true
     }
 
+    fun <T : Component<*>> getPseudoComponentOrThrow(id: String, clazz: Class<T>): Component<*> {
+        return getPseudoComponent(id, clazz) as T? ?: throw RuntimeException("Unable to find component: $id")
+    }
+
+    fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>?
+
     override fun clone(): Component<T>
 }
