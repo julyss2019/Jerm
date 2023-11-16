@@ -29,8 +29,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val parents = mutableListOf<GermGuiPart<*>>()
         var tmp: GermGuiPart<*> = componentHandle
 
-        while (tmp.parentPart != null) {
-            tmp = tmp.parentPart
+        while (tmp.parentPart.also { tmp = it } != null) {
             parents.add(0, tmp)
         }
 
@@ -38,7 +37,8 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
 
         // 一层层获取控件的 ComponentGroup
         parents.forEach {
-            handleComponentGroup = handleComponentGroup.getComponentOrThrow(it.indexName, Component::class.java) as ComponentGroup
+            handleComponentGroup =
+                handleComponentGroup.getComponentOrThrow(it.indexName, Component::class.java) as ComponentGroup
         }
 
         val clicked = handleComponentGroup.getComponentOrThrow(componentHandle.indexName, Component::class.java)
