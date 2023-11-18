@@ -19,7 +19,7 @@ class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartCont
 
     init {
         containerHandle.guiParts.forEach {
-            addComponent0(HandleToComponentConverter.convert(gui, it))
+            addComponent0(HandleToComponentConverter.convert(gui, this, it))
         }
     }
 
@@ -59,6 +59,6 @@ class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartCont
     }
 
     override fun addComponent(componentHandle: GermGuiPart<*>) {
-        addComponent(HandleToComponentConverter.convert(gui, componentHandle))
+        addComponent(HandleToComponentConverter.convert(gui, this, componentHandle))
     }
 }
