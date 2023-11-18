@@ -23,32 +23,50 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
 
         val guiHandle = event.clickedGuiScreen
         val componentHandle = event.clickedPart ?: return
+        val componentHandleId = componentHandle.indexName
 
         val usingGui = jermPlayer.getUsingGui(guiHandle) as GuiImpl? ?: return
         // 从 handle 反向获取所有父控件
         val parents = mutableListOf<GermGuiPart<*>>()
-        var tmp: GermGuiPart<*> = componentHandle
+        var tmpParentComponentHandle: GermGuiPart<*> = componentHandle
 
-        while (tmp.parentPart.also { tmp = it } != null) {
-            parents.add(0, tmp)
+        while (tmpParentComponentHandle.parentPart?.also { tmpParentComponentHandle = it } != null) {
+            parents.add(0, tmpParentComponentHandle)
         }
 
-        var handleComponentGroup: ComponentGroup = usingGui
+        var tmpParentComponent: Component<*>? = null
 
         // 一层层获取控件的 ComponentGroup
         parents.forEach {
-            handleComponentGroup =
-                handleComponentGroup.getComponentOrThrow(it.indexName, Component::class.java) as ComponentGroup
+            tmpParentComponent = when (tmpParentComponent) {
+                null -> {
+                    usingGui.getComponentOrThrow(it.indexName, Component::class.java)
+                }
+
+                is ComponentGroup -> {
+                    (tmpParentComponent as ComponentGroup).getComponentOrThrow(it.indexName, Component::class.java)
+                }
+
+                else -> {
+                    tmpParentComponent!!.getPseudoComponentOrThrow(it.indexName, Component::class.java) // 伪部件
+                }
+            }
         }
 
-        val clicked = handleComponentGroup.getComponentOrThrow(componentHandle.indexName, Component::class.java)
+        val clickedComponent = if (tmpParentComponent == null) { // 根组件
+            usingGui.getComponentOrThrow(componentHandleId, Component::class.java)
+        } else {
+            (tmpParentComponent as ComponentGroup).getComponent(componentHandleId, Component::class.java) // CommandGroup 下属部件
+                ?: tmpParentComponent!!.getPseudoComponentOrThrow(componentHandleId, Component::class.java) // 伪部件
+        }
+
         val clickType = when (event.clickType) {
             GermGuiScreen.ClickType.LEFT_CLICK -> Component.ClickType.LEFT
             GermGuiScreen.ClickType.RIGHT_CLICK -> Component.ClickType.RIGHT
             else -> return
         }
 
-        clicked.onClickListener?.onClick(clickType)
+        clickedComponent.onClickListener?.onClick(clickType)
     }
 
     @EventHandler
