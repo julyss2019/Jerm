@@ -6,7 +6,7 @@ import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 
-class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) : ComponentGroup {
+class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartContainer) : ComponentGroup {
     override var components: List<Component<*>>
         get() = componentMap.values.toList()
         set(value) {
@@ -19,8 +19,12 @@ class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) :
 
     init {
         containerHandle.guiParts.forEach {
-            addComponent(it)
+            addComponent0(HandleToComponentConverter.convert(gui, this, it))
         }
+    }
+
+    private fun addComponent0(component: Component<*>) {
+        componentMap[component.id] = component
     }
 
     override fun existsComponent(id: String): Boolean {
@@ -37,7 +41,7 @@ class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) :
     }
 
     override fun <T : Component<*>> getComponent(id: String, clazz: Class<T>): T? {
-        return componentMap[id] as T
+        return componentMap[id] as T?
     }
 
     override fun removeComponent(id: String) {
@@ -46,15 +50,15 @@ class ComponentGroupImpl(val gui: Gui, val containerHandle: IGuiPartContainer) :
     }
 
     override fun addComponent(component: Component<*>) {
-        require(existsComponent(component.id)) {
+        require(!existsComponent(component.id)) {
             "Component already exists with id: ${component.id}"
         }
 
         containerHandle.addGuiPart(component.handle)
-        componentMap[component.id] = component
+        addComponent0(component)
     }
 
     override fun addComponent(componentHandle: GermGuiPart<*>) {
-        addComponent(HandleToComponentConverter.convert(gui, componentHandle))
+        addComponent(HandleToComponentConverter.convert(gui, this, componentHandle))
     }
 }

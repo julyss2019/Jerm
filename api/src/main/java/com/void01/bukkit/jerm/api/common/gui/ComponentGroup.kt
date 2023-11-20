@@ -1,7 +1,6 @@
 package com.void01.bukkit.jerm.api.common.gui
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
-import com.germ.germplugin.api.dynamic.gui.IGuiPartContainer
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 
 interface ComponentGroup : Cloneable {

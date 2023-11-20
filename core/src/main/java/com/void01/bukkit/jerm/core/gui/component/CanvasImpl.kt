@@ -9,8 +9,10 @@ import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.core.gui.ComponentGroupImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class CanvasImpl(override val gui: Gui, handle: GermGuiCanvas) : BaseComponent<GermGuiCanvas>(gui, handle),
+class CanvasImpl(override val gui: Gui, group: ComponentGroup, handle: GermGuiCanvas) :
+    BaseComponent<GermGuiCanvas>(gui, group, handle),
     ComponentGroup, Canvas {
+    override val origin: Canvas by lazy { clone() }
     private val componentGroup = ComponentGroupImpl(gui, handle)
     override var components: List<Component<*>>
         get() = componentGroup.components
@@ -47,6 +49,6 @@ class CanvasImpl(override val gui: Gui, handle: GermGuiCanvas) : BaseComponent<G
     }
 
     override fun clone(): Canvas {
-        return CanvasImpl(gui, GermUtils.cloneGuiPart(handle))
+        return CanvasImpl(gui, componentGroup, GermUtils.cloneGuiPart(handle))
     }
 }

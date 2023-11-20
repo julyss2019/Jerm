@@ -1,19 +1,38 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
+import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ButtonImpl(gui: Gui, handle: GermGuiButton) : BaseComponent<GermGuiButton>(gui, handle), Button {
+class ButtonImpl(gui: Gui, group: ComponentGroup, handle: GermGuiButton) :
+    BaseComponent<GermGuiButton>(gui, group, handle), Button {
+    override val origin: Button by lazy { clone() }
     override var texts: List<String>
         get() = handle.texts
         set(value) {
             handle.texts = value
         }
+    private var germHandlersRegistered = false
     override var onButtonClickListener: Button.OnClickListener? = null
+        set(value) {
+            registerGermHandlers()
+            field = value
+        }
 
-    init {
+    private fun registerGermHandlers() {
+        // 因为原生 GUI 会被实例化为 Jerm GUI，
+        if (germHandlersRegistered) {
+            return
+        }
+
+        GermGuiButton.EventType.entries.forEach {
+            if (handle.getCallbackHandler(it) != null) {
+                throw RuntimeException("Unable to register onButtonClickListener, because Germ's ${it.name} callback handler is registered")
+            }
+        }
+
         handle.registerCallbackHandler({ _, _ ->
             onButtonClickListener?.onClick(Button.ClickType.LEFT, false)
         }, GermGuiButton.EventType.LEFT_CLICK)
@@ -34,9 +53,11 @@ class ButtonImpl(gui: Gui, handle: GermGuiButton) : BaseComponent<GermGuiButton>
         handle.registerCallbackHandler({ _, _ ->
             onButtonClickListener?.onClick(Button.ClickType.MIDDLE, true)
         }, GermGuiButton.EventType.SHIFT_MILLE_CLICK)
+
+        germHandlersRegistered = true
     }
 
     override fun clone(): Button {
-        return ButtonImpl(gui, GermUtils.cloneGuiPart(handle))
+        return ButtonImpl(gui, group, GermUtils.cloneGuiPart(handle))
     }
 }

@@ -4,6 +4,7 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import org.bukkit.inventory.ItemStack
 
 interface ItemSlot : Component<GermGuiSlot> {
+    override val origin: ItemSlot
     @Deprecated("改为 itemStack")
     var item: ItemStack?
     var itemStack : ItemStack?

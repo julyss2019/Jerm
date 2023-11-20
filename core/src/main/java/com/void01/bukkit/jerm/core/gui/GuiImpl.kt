@@ -16,31 +16,31 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         set(value) {
             componentGroup.components = value
         }
+    override val id: String = handle.guiName
+    override var onCloseListener: Gui.OnCloseListener? = null
+    override var onOpenListener: Gui.OnOpenListener? = null
 
     override fun clearComponents() {
         componentGroup.clearComponents()
     }
-
-    override val id: String = handle.guiName
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
      * @param cover 覆盖
      */
     override fun openAsGui(bukkitPlayer: Player, cover: Boolean) {
+        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+
         if (cover) {
             handle.openGui(bukkitPlayer)
         } else {
             handle.openChildGui(bukkitPlayer)
         }
-
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addJermUsingGui(this)
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
+        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
         handle.openHud(bukkitPlayer)
-
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addJermUsingGui(this)
     }
 
     override fun close() {

@@ -35,8 +35,13 @@ class GuiManagerImpl(plugin: JermPlugin) : GuiManager {
     fun load() {
         GermUtils.getGuiFolder()
             .walk()
+            .filter { it.isFile }
             .flatMap {
-                guiParser.parseGuis(it)
+                try {
+                    guiParser.parseGuis(it)
+                } catch (ex: Exception) {
+                    throw RuntimeException("在载入 ${it.absolutePath} 时出现了异常", ex)
+                }
             }
             .forEach {
                 guiMap[it.id] = it
