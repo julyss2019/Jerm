@@ -6,6 +6,7 @@ import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
+import java.util.UUID
 
 class ItemSlotImpl(gui: Gui, group: ComponentGroup, handle: GermGuiSlot) :
     BaseComponent<GermGuiSlot>(gui, group, handle), ItemSlot {
@@ -33,7 +34,7 @@ class ItemSlotImpl(gui: Gui, group: ComponentGroup, handle: GermGuiSlot) :
             return if (handle.identity == handle.indexName) null else handle.indexName // 不应该默认 binding 为索引名
         }
         set(value) {
-            handle.identity = value ?: handle.indexName // 萌芽 bug，不允许为空
+            handle.identity = value ?: UUID.randomUUID().toString() // 萌芽 bug，不允许为空
         }
 
     @Deprecated("弃用", ReplaceWith("binding"))
