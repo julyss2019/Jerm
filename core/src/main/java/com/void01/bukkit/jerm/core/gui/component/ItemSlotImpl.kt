@@ -11,6 +11,7 @@ import java.util.UUID
 class ItemSlotImpl(gui: Gui, group: ComponentGroup, handle: GermGuiSlot) :
     BaseComponent<GermGuiSlot>(gui, group, handle), ItemSlot {
     override val origin: ItemSlot by lazy { clone() }
+    @Deprecated("改为 itemStack")
     override var item: ItemStack?
         get() = handle.itemStack
         set(value) {
