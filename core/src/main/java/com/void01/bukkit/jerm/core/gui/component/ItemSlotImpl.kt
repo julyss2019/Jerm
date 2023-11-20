@@ -38,12 +38,12 @@ class ItemSlotImpl(gui: Gui, group: ComponentGroup, handle: GermGuiSlot) :
 
     @Deprecated("弃用", ReplaceWith("binding"))
     override fun setSlotId(id: String?) {
-        handle.identity = id
+        binding = id
     }
 
     @Deprecated("弃用", ReplaceWith("binding"))
     override fun getSlotId(): String? {
-        return handle.identity
+        return binding
     }
 
     override fun clone(): ItemSlot {
