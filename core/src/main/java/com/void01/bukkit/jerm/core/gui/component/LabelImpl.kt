@@ -9,14 +9,11 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 class LabelImpl(gui: Gui, group: ComponentGroup, handle: GermGuiLabel) :
     BaseComponent<GermGuiLabel>(gui, group, handle), Label {
     override val origin: Label by lazy { clone() }
-
-    override fun getTexts(): List<String> {
-        return handle.texts
-    }
-
-    override fun setTexts(texts: List<String>) {
-        handle.texts = texts
-    }
+    override var texts: List<String>
+        get() = handle.texts
+        set(value) {
+            handle.texts = value
+        }
 
     override fun setTexts(vararg texts: String) {
         handle.texts = texts.toList()
