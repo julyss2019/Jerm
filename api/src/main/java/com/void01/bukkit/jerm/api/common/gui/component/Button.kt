@@ -20,5 +20,13 @@ interface Button : Component<GermGuiButton> {
         onButtonClickListener?.onClick(clickType, shift)
     }
 
+    fun setTexts(vararg texts : String) {
+        this.texts = texts.toList()
+    }
+
+    fun clearTexts() {
+        this.texts = emptyList()
+    }
+
     public override fun clone(): Button
 }
