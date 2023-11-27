@@ -8,6 +8,8 @@ interface Label : Component<GermGuiLabel> {
 
     fun getTexts(): List<String>
 
+    fun setTexts(vararg texts: String)
+
     fun setTexts(texts: List<String>)
 
     fun addText(text: String)

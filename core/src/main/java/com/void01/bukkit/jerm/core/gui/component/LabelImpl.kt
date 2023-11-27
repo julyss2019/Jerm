@@ -18,6 +18,10 @@ class LabelImpl(gui: Gui, group: ComponentGroup, handle: GermGuiLabel) :
         handle.texts = texts
     }
 
+    override fun setTexts(vararg texts: String) {
+        handle.texts = texts.toList()
+    }
+
     override fun addText(text: String) {
         handle.addText(text)
     }
