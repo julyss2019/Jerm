@@ -4,9 +4,11 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 
 interface ComponentGroup : Cloneable {
-    var components: List<Component<*>>
+    val components: List<Component<*>>
 
     fun clearComponents()
+
+    fun getComponentsRecursively() : List<Component<*>>
 
     fun <T : GermGuiPart<T>> getComponentHandleOrThrow(id: String, clazz: Class<T>): T {
         return getComponentHandle(id, clazz) ?: throw RuntimeException("Unable to find component handle: $id")

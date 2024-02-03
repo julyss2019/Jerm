@@ -48,6 +48,10 @@ class ScrollBoxImpl(gui: Gui, group: ComponentGroup, handle: GermGuiScroll) :
         componentGroup.clearComponents()
     }
 
+    override fun getComponentsRecursively(): List<Component<*>> {
+        return componentGroup.getComponentsRecursively()
+    }
+
     override fun <T : GermGuiPart<T>> getComponentHandle(id: String, clazz: Class<T>): T? {
         return componentGroup.getComponentHandle(id, clazz)
     }

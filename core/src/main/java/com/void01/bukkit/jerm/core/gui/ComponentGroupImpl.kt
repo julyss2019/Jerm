@@ -36,6 +36,24 @@ class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartCont
         componentMap.clear()
     }
 
+    private fun getComponentsRecursively0(componentGroup: ComponentGroup) : List<Component<*>> {
+        val list = mutableListOf<Component<*>>()
+
+        componentGroup.components.forEach {
+            if (it is ComponentGroup) {
+                list.addAll(getComponentsRecursively0(it))
+            } else {
+                list.add(it)
+            }
+        }
+
+        return list
+    }
+
+    override fun getComponentsRecursively(): List<Component<*>> {
+        return getComponentsRecursively0(this)
+    }
+
     override fun <T : GermGuiPart<T>> getComponentHandle(id: String, clazz: Class<T>): T? {
         return containerHandle.getGuiPart(id, clazz)
     }

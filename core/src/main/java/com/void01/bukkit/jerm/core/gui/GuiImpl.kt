@@ -24,6 +24,10 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         componentGroup.clearComponents()
     }
 
+    override fun getComponentsRecursively(): List<Component<*>> {
+        return componentGroup.getComponentsRecursively()
+    }
+
     /** 打开 GUI
      * @param bukkitPlayer 玩家
      * @param cover 覆盖
