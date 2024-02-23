@@ -35,5 +35,5 @@ interface GuiManager {
      */
     fun saveGuiFile(inputStream: InputStream, fileName: String, overwrite: Boolean)
 
-    fun createProgressBar(texture: Texture, maxWidth: String, baseEndU: Int = -1): ProgressBar
+    fun createHorizontalProgressBar(texture: Texture): ProgressBar
 }

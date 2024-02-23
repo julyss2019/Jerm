@@ -4,21 +4,20 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
+import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 
 
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
 abstract class BaseComponent<T : GermGuiPart<*>>(
     override val gui: Gui,
-    override val group: ComponentGroup,
+    override val parent: JermComponentGroup<GermGuiPart<*>>?,
     override val handle: T
-) :
-    Component<T> {
+) : Component<T> {
     override var id: String
         get() = handle.indexName
         set(value) {
             handle.indexName = value
         }
-    override var onClickListener: Component.OnClickListener? = null
     override var enabled: Boolean
         get() = handle.isEnable
         set(value) {
@@ -29,6 +28,7 @@ abstract class BaseComponent<T : GermGuiPart<*>>(
         set(value) {
             handle.tooltip = value
         }
+    override var onClickListener: Component.OnClickListener? = null
 
     override fun performClick(clickType: Component.ClickType) {
         onClickListener?.onClick(clickType)

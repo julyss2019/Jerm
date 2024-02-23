@@ -1,5 +1,7 @@
 package com.void01.bukkit.jerm.core
 
+import com.germ.germplugin.api.GermKeyAPI
+import com.germ.germplugin.api.KeyType
 import com.github.julyss2019.bukkit.voidframework.VoidFramework
 import com.github.julyss2019.bukkit.voidframework.command.annotation.CommandMapping
 import com.github.julyss2019.bukkit.voidframework.logging.logger.Logger
@@ -65,22 +67,29 @@ class JermPlugin : JavaPlugin(), Context {
         Jerm.setContext(this)
 
         VoidFramework.getCommandManager().createCommandFramework(this).run {
-            addParamParser(AnimationParamParser(this@JermPlugin))
             addParamParser(GuiParamParser(this@JermPlugin))
             addParamParser(JermPlayerParamParser(this@JermPlugin))
 
-            addParamTabCompleter(AnimationParamTabCompleter(this@JermPlugin))
             addParamTabCompleter(JermPlayerTabCompleter())
             addParamTabCompleter(GuiParamTabCompleter(this@JermPlugin))
 
             registerCommandGroup(PluginCommandGroup(this@JermPlugin))
             registerCommandGroup(GuiCommandGroup(this@JermPlugin))
-            registerCommandGroup(AnimationCommandGroup(this@JermPlugin))
+            registerCommandGroup(AnimationCommandGroup())
         }
 
         Bukkit.getPluginManager().registerEvents(GuiDebugListener(this), this)
         Bukkit.getPluginManager().registerEvents(GuiListener(this), this)
 
+        GermKeyAPI.registerKey(KeyType.KEY_LSHIFT)
+        GermKeyAPI.registerKey(KeyType.KEY_RSHIFT)
+        GermKeyAPI.registerKey(KeyType.KEY_LCONTROL)
+        GermKeyAPI.registerKey(KeyType.KEY_RCONTROL)
+        GermKeyAPI.registerKey(KeyType.KEY_LMETA)
+        GermKeyAPI.registerKey(KeyType.KEY_RMETA)
+
+        GermKeyAPI.registerKey(KeyType.KEY_LMENU)
+        GermKeyAPI.registerKey(KeyType.KEY_RMENU)
         voidLogger.info("插件已加载.")
     }
 

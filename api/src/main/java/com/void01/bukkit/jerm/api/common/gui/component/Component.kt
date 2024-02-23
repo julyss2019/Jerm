@@ -6,9 +6,8 @@ import com.void01.bukkit.jerm.api.common.gui.Gui
 
 
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
-interface Component<T : GermGuiPart<*>> : Cloneable {
-    val group : ComponentGroup
-    val origin: Component<T>
+interface Component<out T : GermGuiPart<*>> : Cloneable {
+    val parent: JermComponentGroup<GermGuiPart<*>>?
     val gui: Gui
     val handle: T
     var id: String
@@ -17,11 +16,19 @@ interface Component<T : GermGuiPart<*>> : Cloneable {
     var onClickListener: OnClickListener?
 
     enum class ClickType {
-        LEFT, RIGHT
+        LEFT,
+        RIGHT,
+        MIDDLE,
     }
 
     interface OnClickListener {
-        fun onClick(clickType: ClickType)
+        fun onClick(clickType: ClickType) {}
+
+        fun onClick(clickType: ClickType, shift: Boolean) {}
+
+        fun onClickDown(clickType: ClickType) {}
+
+        fun onClickUp(clickType: ClickType) {}
     }
 
     fun performClick(clickType: ClickType)

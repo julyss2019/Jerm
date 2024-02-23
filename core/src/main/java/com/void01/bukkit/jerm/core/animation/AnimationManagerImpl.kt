@@ -1,93 +1,37 @@
 package com.void01.bukkit.jerm.core.animation
 
-import com.void01.bukkit.jerm.core.util.GermUtils
-import com.github.julyss2019.bukkit.voidframework.yaml.Yaml
-import com.google.gson.JsonParser
-import com.void01.bukkit.jerm.api.common.animation.Animation
+import com.germ.germplugin.api.GermPacketAPI
+import com.germ.germplugin.api.bean.AnimDataDTO
 import com.void01.bukkit.jerm.api.common.animation.AnimationManager
 import com.void01.bukkit.jerm.core.JermPlugin
-import org.bukkit.scheduler.BukkitRunnable
-import java.io.File
+import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 
-class AnimationManagerImpl(plugin: JermPlugin) : AnimationManager {
-    private val logger = plugin.voidLogger
-    private var animationImplMap = mutableMapOf<String, Animation>()
-
-    init {
-        object : BukkitRunnable() {
-            override fun run() {
-                load()
-            }
-        }.runTaskLater(plugin, 40L)
+class AnimationManagerImpl(val plugin: JermPlugin) : AnimationManager {
+    override fun playAnimation(performer: Entity, viewers: List<Player>, animationId: String) {
+        playAnimation(performer, viewers, animationId, 1F)
     }
 
-    fun reload() {
-        load()
+    override fun playAnimation(performer: Entity, viewers: List<Player>, animationId: String, speed: Float) {
+        playAnimation(performer, viewers, animationId, speed, false)
     }
 
-    fun load() {
-        val tmpMap = mutableMapOf<String, Animation>()
-        val animationFolder = GermUtils.getAnimationFolder()
-
-        fun checkAndPut(animation: Animation) {
-            val animationId = animation.id
-
-            if (tmpMap.containsKey(animationId)) {
-                logger.warn("存在相同 ID 的动画文件: $animation, ${tmpMap[animation.id]}")
-            }
-
-            tmpMap[animationId] = animation
+    override fun playAnimation(
+        performer: Entity,
+        viewers: List<Player>,
+        animationId: String,
+        speed: Float,
+        reverse: Boolean
+    ) {
+        viewers.forEach { viewer ->
+            GermPacketAPI.sendBendAction(
+                viewer, performer.entityId, AnimDataDTO().setName(animationId).setSpeed(speed).setReverse(reverse)
+            )
+            GermPacketAPI.sendModelAnimation(
+                viewer, performer.entityId, AnimDataDTO().setName(animationId).setSpeed(speed).setReverse(reverse)
+            )
         }
 
-        animationFolder.listFiles()
-            ?.filter {
-                it.name.endsWith(".yml")
-            }
-            ?.forEach { sourceFile ->
-                val yaml = Yaml.fromFile(sourceFile)
-
-                yaml.subSections.forEach { section ->
-                    when (section.getString("type")) {
-                        "bedrock_animation" -> {
-                            val bedrockPath = section.getString("animationPath")
-                            val bedrockAnimationFile = File(animationFolder, bedrockPath)
-
-                            if (bedrockAnimationFile.exists()) {
-                                val animationsJsonObject =
-                                    JsonParser().parse(bedrockAnimationFile.bufferedReader().use {
-                                        it.readText()
-                                    }).asJsonObject.getAsJsonObject("animations")
-
-                                animationsJsonObject.entrySet()
-                                    .map { animationId ->
-                                        checkAndPut(BedrockAnimation(animationId.key, sourceFile, bedrockPath))
-                                    }
-                            } else {
-                                logger.warn("无法找到本地基岩动画文件: ${sourceFile.absolutePath}(${section.name}).")
-                            }
-                        }
-
-                        "yaml" -> checkAndPut(YamlAnimation(section.name, sourceFile))
-
-                        else -> {
-                            throw RuntimeException("未知的动画类型: ${sourceFile.absolutePath}(${section.name})")
-                        }
-                    }
-                }
-            }
-
-        animationImplMap = tmpMap
-        logger.info("载入了 ${tmpMap.size} 个动画: ")
-        getAnimations().forEach {
-            logger.info("- ${it.id}")
-        }
-    }
-
-    override fun getAnimations(): List<Animation> {
-        return animationImplMap.values.toList()
-    }
-
-    override fun getAnimation(id: String): Animation? {
-        return animationImplMap[id]
+        plugin.voidLogger.debug("动画播放指令已发送给客户端, 表演者 = $performer, 观众 = $viewers, 动画 = $animationId, 速度 = $speed.")
     }
 }

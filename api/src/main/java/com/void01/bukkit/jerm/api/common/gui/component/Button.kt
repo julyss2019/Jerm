@@ -3,8 +3,6 @@ package com.void01.bukkit.jerm.api.common.gui.component
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
 
 interface Button : Component<GermGuiButton> {
-    override val origin: Button
-
     enum class ClickType {
         LEFT, RIGHT, MIDDLE
     }
@@ -14,13 +12,16 @@ interface Button : Component<GermGuiButton> {
     }
 
     var texts: List<String>
+
+    @Deprecated(message = "弃用")
     var onButtonClickListener: OnClickListener?
 
+    @Deprecated(message = "弃用")
     fun performButtonClick(clickType: ClickType, shift: Boolean) {
         onButtonClickListener?.onClick(clickType, shift)
     }
 
-    fun setTexts(vararg texts : String) {
+    fun setTexts(vararg texts: String) {
         this.texts = texts.toList()
     }
 

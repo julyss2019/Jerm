@@ -3,30 +3,22 @@ package com.void01.bukkit.jerm.core.gui
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.void01.bukkit.jerm.api.common.gui.Gui
+import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.component.Component
+import com.void01.bukkit.jerm.api.common.gui.component.RootComponent
 import com.void01.bukkit.jerm.core.JermPlugin
+import com.void01.bukkit.jerm.core.gui.component.RootComponentImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import org.bukkit.entity.Player
 import java.io.File
 
-class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui {
-    private val componentGroup = ComponentGroupImpl(this, handle)
-    override var components: List<Component<*>>
-        get() = componentGroup.components
-        set(value) {
-            componentGroup.components = value
-        }
-    override val id: String = handle.guiName
+class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui,
+    ComponentGroup {
+    override var id: String = handle.guiName
     override var onCloseListener: Gui.OnCloseListener? = null
     override var onOpenListener: Gui.OnOpenListener? = null
-
-    override fun clearComponents() {
-        componentGroup.clearComponents()
-    }
-
-    override fun getComponentsRecursively(): List<Component<*>> {
-        return componentGroup.getComponentsRecursively()
-    }
+    override var onGuiClickListener: Gui.OnClickListener? = null
+    override val rootComponent: RootComponent = RootComponentImpl(this)
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
@@ -55,29 +47,44 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         return "Gui(id='$id')"
     }
 
+    // delegate
+    override val components: List<Component<*>>
+        get() {
+            return rootComponent.components
+        }
+
+    override fun clearComponents() {
+        rootComponent.clearComponents()
+    }
+
+    override fun getComponentsRecursively(): List<Component<*>> {
+        return rootComponent.getComponentsRecursively()
+    }
+
     override fun <T : GermGuiPart<T>> getComponentHandle(id: String, clazz: Class<T>): T? {
-        return componentGroup.getComponentHandle(id, clazz)
+        return rootComponent.getComponentHandle(id, clazz)
     }
 
     override fun <T : Component<*>> getComponent(id: String, clazz: Class<T>): T? {
-        return componentGroup.getComponent(id, clazz)
+        return rootComponent.getComponent(id, clazz)
     }
 
     override fun removeComponent(id: String) {
-        componentGroup.removeComponent(id)
+        rootComponent.removeComponent(id)
     }
 
     override fun addComponent(component: Component<*>) {
-        componentGroup.addComponent(component)
+        rootComponent.addComponent(component)
     }
 
     override fun addComponent(componentHandle: GermGuiPart<*>) {
-        componentGroup.addComponent(componentHandle)
+        rootComponent.addComponent(componentHandle)
     }
 
     override fun existsComponent(id: String): Boolean {
-        return componentGroup.existsComponent(id)
+        return rootComponent.existsComponent(id)
     }
+    // delegate
 
     override fun clone(): Gui {
         return GuiImpl(handle.clone(), sourceFile, plugin)

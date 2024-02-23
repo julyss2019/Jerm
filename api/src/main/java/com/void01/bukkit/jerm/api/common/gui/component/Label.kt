@@ -3,7 +3,6 @@ package com.void01.bukkit.jerm.api.common.gui.component
 import com.germ.germplugin.api.dynamic.gui.GermGuiLabel
 
 interface Label : Component<GermGuiLabel> {
-    override val origin: Label
     override val handle: GermGuiLabel
     var texts : List<String>
 

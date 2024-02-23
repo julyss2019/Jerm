@@ -1,14 +1,15 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
+import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Button
+import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ButtonImpl(gui: Gui, group: ComponentGroup, handle: GermGuiButton) :
-    BaseComponent<GermGuiButton>(gui, group, handle), Button {
-    override val origin: Button by lazy { clone() }
+class ButtonImpl(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: GermGuiButton) :
+    BaseComponent<GermGuiButton>(gui, parent, handle), Button {
     override var texts: List<String>
         get() = handle.texts
         set(value) {
@@ -22,7 +23,7 @@ class ButtonImpl(gui: Gui, group: ComponentGroup, handle: GermGuiButton) :
         }
 
     private fun registerGermHandlers() {
-        // 因为原生 GUI 会被实例化为 Jerm GUI，
+        // 考虑原生 GUI 会被实例化为 Jerm GUI
         if (germHandlersRegistered) {
             return
         }
@@ -58,6 +59,6 @@ class ButtonImpl(gui: Gui, group: ComponentGroup, handle: GermGuiButton) :
     }
 
     override fun clone(): Button {
-        return ButtonImpl(gui, group, GermUtils.cloneGuiPart(handle))
+        return ButtonImpl(gui, parent, GermUtils.cloneGuiPart(handle))
     }
 }

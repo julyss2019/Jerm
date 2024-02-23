@@ -1,5 +1,6 @@
 package com.void01.bukkit.jerm.api.common.player
 
+import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import org.bukkit.entity.Player
 
@@ -15,4 +16,5 @@ interface JermPlayer {
     fun getOnlineBukkitPlayer() : Player
 
     fun closeGuis()
+    fun getUsingGui(handle: GermGuiScreen): Gui?
 }

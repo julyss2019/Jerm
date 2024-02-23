@@ -6,6 +6,7 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 import com.github.julyss2019.bukkit.voidframework.logging.logger.Logger
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.component.Texture
+import com.void01.bukkit.jerm.api.common.gui.extension.component.ProgressBar
 import com.void01.bukkit.jerm.core.gui.extension.ProgressBarImpl
 import org.bukkit.scheduler.BukkitRunnable
 import java.io.File
@@ -38,6 +39,7 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
         GermUtils.getGuiFolder()
             .walk()
             .filter { it.isFile }
+            .filter { it.name.endsWith(".yml") }
             .flatMap {
                 try {
                     guiParser.parseGuis(it)
@@ -71,8 +73,8 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
         }
     }
 
-    override fun createProgressBar(texture: Texture, maxWidth: String, baseEndU: Int): ProgressBarImpl {
-        return ProgressBarImpl(plugin, texture, maxWidth, baseEndU)
+    override fun createHorizontalProgressBar(texture: Texture): ProgressBar {
+        return ProgressBarImpl(plugin, texture)
     }
 
     override fun getGuis(): List<Gui> {

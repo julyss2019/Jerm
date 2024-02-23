@@ -1,95 +1,185 @@
 package com.void01.bukkit.jerm.core.listener
 
+import com.germ.germplugin.api.dynamic.gui.GermGuiButton
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
-import com.germ.germplugin.api.event.gui.GermGuiClickEvent
-import com.germ.germplugin.api.event.gui.GermGuiClosedEvent
-import com.germ.germplugin.api.event.gui.GermGuiOpenedEvent
+import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
+import com.germ.germplugin.api.event.gui.*
+import com.void01.bukkit.jerm.api.common.event.GuiCloseEvent
+import com.void01.bukkit.jerm.api.common.event.GuiOpenEvent
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
+import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
+import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.util.*
 
 class GuiListener(private val plugin: JermPlugin) : Listener {
-    private val playerManager = plugin.playerManager
+    companion object {
+        private fun parseIsShiftClick(enum: Enum<*>): Boolean {
+            return enum.name.contains("SHIFT")
+        }
+    }
 
-    @EventHandler
-    fun onGermGuiClickEvent(event: GermGuiClickEvent) {
-        val bukkitPlayer = event.player
-        val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+    private val jermPlayerManager = plugin.playerManager
 
-        val guiHandle = event.clickedGuiScreen
-        val componentHandle = event.clickedPart ?: return
-        val componentHandleId = componentHandle.indexName
+    private fun resolveComponent(
+        usingGui: Gui,
+        clickedComponentHandle: GermGuiPart<*>
+    ): Component<*> {
+        val componentNodes = Stack<GermGuiPart<*>>()
+        var currentComponentHandle: GermGuiPart<*> = clickedComponentHandle
 
-        val usingGui = jermPlayer.getUsingGui(guiHandle) as GuiImpl? ?: return
+        componentNodes.push(clickedComponentHandle)
+
         // 从 handle 反向获取所有父控件
-        val parents = mutableListOf<GermGuiPart<*>>()
-        var tmpParentComponentHandle: GermGuiPart<*> = componentHandle
-
-        while (tmpParentComponentHandle.parentPart?.also { tmpParentComponentHandle = it } != null) {
-            parents.add(0, tmpParentComponentHandle)
+        while (currentComponentHandle.parentPart?.also { currentComponentHandle = it } != null) {
+            componentNodes.push(currentComponentHandle)
         }
 
-        var tmpParentComponent: Component<*>? = null
+        var currentComponent: Component<*>? = usingGui.rootComponent // 在最底层的父 Component
 
-        // 一层层获取控件的 ComponentGroup
-        parents.forEach {
-            tmpParentComponent = when (tmpParentComponent) {
-                null -> {
-                    usingGui.getComponentOrThrow(it.indexName, Component::class.java)
-                }
+        while (!componentNodes.empty()) {
+            val pop = componentNodes.pop()
+            val tmp = (currentComponent as ComponentGroup).getComponent(pop.indexName, Component::class.java)
 
-                is ComponentGroup -> {
-                    (tmpParentComponent as ComponentGroup).getComponentOrThrow(it.indexName, Component::class.java)
-                }
-
-                else -> {
-                    tmpParentComponent!!.getPseudoComponentOrThrow(it.indexName, Component::class.java) // 伪部件
-                }
-            }
+            currentComponent =
+                tmp ?: currentComponent.getPseudoComponentOrThrow(pop.indexName, Component::class.java) // 伪部件（滚动条）
         }
 
-        val clickedComponent = if (tmpParentComponent == null) { // 根组件
-            usingGui.getComponentOrThrow(componentHandleId, Component::class.java)
-        } else {
-            (tmpParentComponent as ComponentGroup).getComponent(componentHandleId, Component::class.java) // CommandGroup 下属部件
-                ?: tmpParentComponent!!.getPseudoComponentOrThrow(componentHandleId, Component::class.java) // 伪部件
+        return currentComponent!!
+    }
+
+    private fun fireComponentClickListener(
+        component: Component<*>,
+        clickType: Component.ClickType,
+        isShift: Boolean,
+    ) {
+        component.onClickListener?.run {
+            onClick(clickType)
+            onClick(clickType, isShift)
+        }
+    }
+
+    // LEFT, MIDDLE, RIGHT, SHIFT
+    @EventHandler
+    fun onSlotClick(event: GermGuiSlotClickEvent) {
+        val germEventType = event.eventType
+        val clickType = when (germEventType) {
+            GermGuiSlot.EventType.LEFT_CLICK, GermGuiSlot.EventType.SHIFT_LEFT_CLICK -> Component.ClickType.LEFT
+            GermGuiSlot.EventType.RIGHT_CLICK, GermGuiSlot.EventType.SHIFT_RIGHT_CLICK -> Component.ClickType.RIGHT
+            GermGuiSlot.EventType.MIDDLE_CLICK, GermGuiSlot.EventType.SHIFT_MILLE_CLICK -> Component.ClickType.MIDDLE
+            else -> return
+        }
+        val jermPlayer = jermPlayerManager.getPlayer(event.player)
+        val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
+        val resolvedComponent = resolveComponent(usingGui, event.germGuiSlot) as ItemSlot
+        val isShift = parseIsShiftClick(germEventType)
+
+        // 萌芽如果设置 interact 为 false 则连事件都不会触发了，这造成了开发不便
+        // Jerm interactive 并不会调用萌芽的 setInteract 的方法，而是这里进行特殊处理
+        if (!resolvedComponent.canTakeAway) {
+            event.isCancelled = true
         }
 
-        val clickType = when (event.clickType) {
-            GermGuiScreen.ClickType.LEFT_CLICK -> Component.ClickType.LEFT
-            GermGuiScreen.ClickType.RIGHT_CLICK -> Component.ClickType.RIGHT
+        fireComponentClickListener(resolvedComponent, clickType, isShift)
+    }
+
+    // LEFT, MIDDLE, RIGHT, SHIFT
+    @EventHandler
+    fun onButtonClick(event: GermGuiButtonEvent) {
+        val germEventType = event.eventType
+        val clickType = when (germEventType) {
+            GermGuiButton.EventType.LEFT_CLICK, GermGuiButton.EventType.SHIFT_LEFT_CLICK -> Component.ClickType.LEFT
+            GermGuiButton.EventType.RIGHT_CLICK, GermGuiButton.EventType.SHIFT_RIGHT_CLICK -> Component.ClickType.RIGHT
+            GermGuiButton.EventType.MIDDLE_CLICK, GermGuiButton.EventType.SHIFT_MILLE_CLICK -> Component.ClickType.MIDDLE
+            else -> return
+        }
+        val isShift = parseIsShiftClick(germEventType)
+        val jermPlayer = jermPlayerManager.getPlayer(event.player)
+        val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
+        val resolvedComponent = resolveComponent(usingGui, event.germGuiButton)
+
+        fireComponentClickListener(resolvedComponent, clickType, isShift)
+    }
+
+    // LEFT, RIGHT, DOWN, UP
+    @EventHandler
+    fun onGuiClick(event: GermGuiClickEvent) {
+        val bukkitPlayer = event.player
+        val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+        val guiHandle = event.clickedGuiScreen
+        val usingGui = jermPlayer.getUsingGui(guiHandle) as GuiImpl? ?: return
+        val clickedComponentHandle = event.clickedPart
+        val germEventType = event.clickType
+        val clickDown = germEventType.name.endsWith("RELEASE")
+        val clickType = when (germEventType) {
+            GermGuiScreen.ClickType.LEFT_CLICK, GermGuiScreen.ClickType.LEFT_CLICK_RELEASE -> Component.ClickType.LEFT
+            GermGuiScreen.ClickType.RIGHT_CLICK, GermGuiScreen.ClickType.RIGHT_CLICK_RELEASE -> Component.ClickType.RIGHT
             else -> return
         }
 
-        clickedComponent.onClickListener?.onClick(clickType)
+        val resolvedComponent =
+            if (clickedComponentHandle == null) null else resolveComponent(usingGui, clickedComponentHandle)
+
+        if (clickDown) {
+            usingGui.onGuiClickListener?.onClickDown(resolvedComponent, clickType, event)
+        } else {
+            usingGui.onGuiClickListener?.onClickUp(resolvedComponent, clickType, event)
+        }
+
+        if (resolvedComponent != null) {
+            resolvedComponent.onClickListener?.run {
+                if (clickDown) {
+                    onClickDown(clickType)
+
+                    // 如果 GermGuiSlot.isInteract 为 false 则不会触发 GermGuiSlotEvent，则在这里补，但这里会缺少 Shift 的检测
+                    if (resolvedComponent is ItemSlot && resolvedComponent.interactive) {
+                        return
+                    }
+
+                    fireComponentClickListener(resolvedComponent, clickType, false)
+                } else {
+                    onClickUp(clickType)
+                }
+            }
+        }
     }
 
     @EventHandler
     fun onOpen(event: GermGuiOpenedEvent) {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player
-        val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+        val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
         // 这里仅处理没有使用 Jerm 打开的 GUI，将为其手动实例化一个 GUI
         if (jermPlayer.getUsingGui(handle) == null) {
             jermPlayer.addUsingGui(GuiImpl(handle, null, plugin))
-        } else {
-            jermPlayer.getUsingGui(handle)?.onOpenListener?.onOpen()
         }
+
+        val gui = jermPlayer.getUsingGui(handle)!!
+
+        gui.onOpenListener?.onOpen()
+        Bukkit.getPluginManager().callEvent(GuiOpenEvent(jermPlayer, gui))
     }
 
     @EventHandler
     fun onClose(event: GermGuiClosedEvent) {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player
-        val jermPlayer = playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+        val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+        val usingGui = jermPlayer.getUsingGui(handle)
 
-        jermPlayer.getUsingGui(handle)?.onCloseListener?.onClose()
+        usingGui?.onCloseListener?.onClose()
         jermPlayer.removeUsingGui(event.germGuiScreen)
+
+        if (usingGui != null) {
+            Bukkit.getPluginManager().callEvent(GuiCloseEvent(jermPlayer, usingGui))
+        }
     }
 }

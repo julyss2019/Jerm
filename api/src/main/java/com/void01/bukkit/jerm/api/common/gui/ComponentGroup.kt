@@ -8,7 +8,7 @@ interface ComponentGroup : Cloneable {
 
     fun clearComponents()
 
-    fun getComponentsRecursively() : List<Component<*>>
+    fun getComponentsRecursively(): List<Component<*>>
 
     fun <T : GermGuiPart<T>> getComponentHandleOrThrow(id: String, clazz: Class<T>): T {
         return getComponentHandle(id, clazz) ?: throw RuntimeException("Unable to find component handle: $id")
