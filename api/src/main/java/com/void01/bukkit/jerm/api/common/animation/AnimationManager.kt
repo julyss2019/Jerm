@@ -1,7 +1,12 @@
 package com.void01.bukkit.jerm.api.common.animation
 
-interface AnimationManager {
-    fun getAnimations(): List<Animation>
+import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 
-    fun getAnimation(id: String): Animation?
+interface AnimationManager {
+    fun playAnimation(performer: Entity, viewers: List<Player>, animationId: String)
+
+    fun playAnimation(performer: Entity, viewers: List<Player>, animationId: String, speed: Float)
+
+    fun playAnimation(performer: Entity, viewers: List<Player>, animationId: String, speed: Float, reverse: Boolean)
 }

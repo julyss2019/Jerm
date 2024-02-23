@@ -1,21 +1,23 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiLabel
+import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
+import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.component.Label
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class LabelImpl(gui: Gui, group: ComponentGroup, handle: GermGuiLabel) :
-    BaseComponent<GermGuiLabel>(gui, group, handle), Label {
-    override val origin: Label by lazy { clone() }
+class LabelImpl(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: GermGuiLabel) :
+    BaseComponent<GermGuiLabel>(gui, parent, handle), Label {
+    override var texts: List<String>
+        get() = handle.texts
+        set(value) {
+            handle.texts = value
+        }
 
-    override fun getTexts(): List<String> {
-        return handle.texts
-    }
-
-    override fun setTexts(texts: List<String>) {
-        handle.texts = texts
+    override fun setTexts(vararg texts: String) {
+        handle.texts = texts.toList()
     }
 
     override fun addText(text: String) {
@@ -23,6 +25,6 @@ class LabelImpl(gui: Gui, group: ComponentGroup, handle: GermGuiLabel) :
     }
 
     override fun clone(): Label {
-        return LabelImpl(gui, group, GermUtils.cloneGuiPart(handle))
+        return LabelImpl(gui, parent, GermUtils.cloneGuiPart(handle))
     }
 }

@@ -15,7 +15,7 @@ class JermPlayerImpl(val uuid: UUID, val plugin: JermPlugin) : JermPlayer {
     override var isScreenDebugEnabled = false
     private val usingGuis = mutableListOf<Gui>()
 
-    fun getUsingGui(handle: GermGuiScreen): Gui? {
+    override fun getUsingGui(handle: GermGuiScreen): Gui? {
         return usingGuis.firstOrNull { it.id == handle.guiName }
     }
 

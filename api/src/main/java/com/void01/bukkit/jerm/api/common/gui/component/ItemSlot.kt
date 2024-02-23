@@ -4,12 +4,15 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import org.bukkit.inventory.ItemStack
 
 interface ItemSlot : Component<GermGuiSlot> {
-    override val origin: ItemSlot
     @Deprecated("改为 itemStack")
     var item: ItemStack?
-    var itemStack : ItemStack?
-    var binding : String?
-    var interactive : Boolean
+    var itemStack: ItemStack?
+    var binding: String?
+    var interactive: Boolean
+    /*
+    仅当 interactive 为 true 时才有意义
+     */
+    var canTakeAway: Boolean
 
     @Deprecated("改为 slotItemBinding(String)")
     fun setSlotId(id: String?)

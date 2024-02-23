@@ -1,12 +1,37 @@
-package com.void01.bukkit.jerm.core.gui
+package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.IGuiPartContainer
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
+import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
+import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
 
-class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartContainer) : ComponentGroup {
+@Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
+abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
+    gui: Gui,
+    override val parent: JermComponentGroup<GermGuiPart<*>>?,
+    override val handle: T,
+    val containerHandle: IGuiPartContainer
+) : BaseComponent<T>(gui, parent, handle), JermComponentGroup<T> {
+    companion object {
+        private fun getComponentsRecursively0(jermComponentGroup: JermComponentGroup<GermGuiPart<*>>): List<Component<*>> {
+            val list = mutableListOf<Component<*>>()
+
+            jermComponentGroup.components.forEach {
+                if (it is ComponentGroup) {
+                    list.addAll(getComponentsRecursively0(it as JermComponentGroup<GermGuiPart<*>>))
+                } else {
+                    list.add(it)
+                }
+            }
+
+            return list
+        }
+    }
+
+    private val componentMap = mutableMapOf<String, Component<*>>()
     override var components: List<Component<*>>
         get() = componentMap.values.toList()
         set(value) {
@@ -15,11 +40,10 @@ class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartCont
                 addComponent(it)
             }
         }
-    private val componentMap = mutableMapOf<String, Component<*>>()
 
     init {
         containerHandle.guiParts.forEach {
-            addComponent0(HandleToComponentConverter.convert(gui, this, it))
+            addComponent0(HandleToComponentConverter.convert(gui, parent, it))
         }
     }
 
@@ -34,6 +58,11 @@ class ComponentGroupImpl(val gui: Gui, private val containerHandle: IGuiPartCont
     override fun clearComponents() {
         containerHandle.clearGuiPart()
         componentMap.clear()
+    }
+
+
+    override fun getComponentsRecursively(): List<Component<*>> {
+        return getComponentsRecursively0(this)
     }
 
     override fun <T : GermGuiPart<T>> getComponentHandle(id: String, clazz: Class<T>): T? {

@@ -1,12 +1,14 @@
 package com.void01.bukkit.jerm.api.common.gui
 
+import com.void01.bukkit.jerm.api.common.gui.component.Texture
+import com.void01.bukkit.jerm.api.common.gui.extension.component.ProgressBar
 import java.io.InputStream
 
 interface GuiManager {
     /**
      * 是否存在 GUI
      */
-    fun existsGui(id: String) : Boolean
+    fun existsGui(id: String): Boolean
 
     /**
      * 重载
@@ -32,4 +34,6 @@ interface GuiManager {
      * 保存 GUI 文件到 GermPlugin 文件
      */
     fun saveGuiFile(inputStream: InputStream, fileName: String, overwrite: Boolean)
+
+    fun createHorizontalProgressBar(texture: Texture): ProgressBar
 }
