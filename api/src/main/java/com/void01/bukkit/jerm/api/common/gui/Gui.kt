@@ -7,7 +7,8 @@ import com.void01.bukkit.jerm.api.common.gui.component.RootComponent
 import org.bukkit.entity.Player
 
 interface Gui : Cloneable, ComponentGroup {
-    var id: String
+    val id: String
+    val instanceId: String
     val handle: GermGuiScreen
     var onCloseListener: OnCloseListener?
     var onOpenListener: OnOpenListener?

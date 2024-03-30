@@ -26,7 +26,7 @@ object Jerm {
     }
 
     fun getPlayerManager(): JermPlayerManager {
-        return context.playerManager
+        return context.jermPlayerManager
     }
 
     fun getGuiParser(): GuiParser {

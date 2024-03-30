@@ -1,11 +1,9 @@
 package com.void01.bukkit.jerm.core
 
-import com.germ.germplugin.api.GermKeyAPI
-import com.germ.germplugin.api.KeyType
 import com.github.julyss2019.bukkit.voidframework.VoidFramework
 import com.github.julyss2019.bukkit.voidframework.command.annotation.CommandMapping
-import com.github.julyss2019.bukkit.voidframework.logging.logger.Logger
 import com.void01.bukkit.jerm.api.common.Jerm
+import com.void01.bukkit.jerm.api.common.Jerm2
 import com.void01.bukkit.jerm.api.common.animation.AnimationManager
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.GuiParser
@@ -15,39 +13,29 @@ import com.void01.bukkit.jerm.core.animation.AnimationManagerImpl
 import com.void01.bukkit.jerm.core.command.AnimationCommandGroup
 import com.void01.bukkit.jerm.core.command.GuiCommandGroup
 import com.void01.bukkit.jerm.core.command.PluginCommandGroup
-import com.void01.bukkit.jerm.core.command.param.*
+import com.void01.bukkit.jerm.core.command.param.GuiParamParser
+import com.void01.bukkit.jerm.core.command.param.GuiParamTabCompleter
+import com.void01.bukkit.jerm.core.command.param.JermPlayerParamParser
+import com.void01.bukkit.jerm.core.command.param.JermPlayerTabCompleter
 import com.void01.bukkit.jerm.core.gui.GuiManagerImpl
 import com.void01.bukkit.jerm.core.gui.GuiParserImpl
 import com.void01.bukkit.jerm.core.listener.GuiDebugListener
 import com.void01.bukkit.jerm.core.listener.GuiListener
 import com.void01.bukkit.jerm.core.player.JermPlayerManagerImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
-import com.void01.bukkit.voidframework.api.common.VoidFramework2
-import com.void01.bukkit.voidframework.api.common.library.Library
-import com.void01.bukkit.voidframework.api.common.library.Repository
+import com.void01.bukkit.voidframework.api.common.extension.VoidPlugin
 import org.bukkit.Bukkit
-import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitRunnable
 
 @CommandMapping(value = "jerm", permission = "jerm.admin")
-class JermPlugin : JavaPlugin(), Context {
-    init {
-        VoidFramework2.getLibraryManager().load(Library.Builder.create()
-            .setClassLoaderByBukkitPlugin(this)
-            .setDependencyByGradleStyleExpression("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
-            .addRepositories(Repository.ALIYUN, Repository.CENTRAL)
-            .addSafeRelocation("_kotlin_", "_com.void01.bukkit.jerm.core.libs.kotlin_")
-            .build())
-    }
-
+class JermPlugin : VoidPlugin(), Context {
     companion object {
         @JvmStatic
         lateinit var instance: JermPlugin
             private set
     }
 
-    lateinit var voidLogger: Logger
-        private set
-    override lateinit var playerManager: JermPlayerManager
+    override lateinit var jermPlayerManager: JermPlayerManager
         private set
     override lateinit var animationManager: AnimationManager
         private set
@@ -56,15 +44,15 @@ class JermPlugin : JavaPlugin(), Context {
     override lateinit var guiManager: GuiManager
         private set
 
-    override fun onEnable() {
+    override fun onPluginEnable() {
         instance = this
-        voidLogger = VoidFramework.getLogManager().createSimpleLogger(this)
-        playerManager = JermPlayerManagerImpl(this)
+        Jerm.setContext(this)
+        Jerm2.setContext(this)
+        saveDefaults()
+        jermPlayerManager = JermPlayerManagerImpl(this)
         animationManager = AnimationManagerImpl(this)
         guiParser = GuiParserImpl(this)
         guiManager = GuiManagerImpl(this)
-
-        Jerm.setContext(this)
 
         VoidFramework.getCommandManager().createCommandFramework(this).run {
             addParamParser(GuiParamParser(this@JermPlugin))
@@ -81,25 +69,26 @@ class JermPlugin : JavaPlugin(), Context {
         Bukkit.getPluginManager().registerEvents(GuiDebugListener(this), this)
         Bukkit.getPluginManager().registerEvents(GuiListener(this), this)
 
-        GermKeyAPI.registerKey(KeyType.KEY_LSHIFT)
-        GermKeyAPI.registerKey(KeyType.KEY_RSHIFT)
-        GermKeyAPI.registerKey(KeyType.KEY_LCONTROL)
-        GermKeyAPI.registerKey(KeyType.KEY_RCONTROL)
-        GermKeyAPI.registerKey(KeyType.KEY_LMETA)
-        GermKeyAPI.registerKey(KeyType.KEY_RMETA)
+        // 等待萌芽载入
+        object : BukkitRunnable() {
+            override fun run() {
+                (guiManager as GuiManagerImpl).load()
+                (animationManager as AnimationManagerImpl).load()
+            }
+        }.runTaskLater(this, 40L)
 
-        GermKeyAPI.registerKey(KeyType.KEY_LMENU)
-        GermKeyAPI.registerKey(KeyType.KEY_RMENU)
-        voidLogger.info("插件已加载.")
+        pluginLogger.info("插件已加载.")
     }
 
-    override fun onDisable() {
+    override fun onPluginDisable() {
         VoidFramework.getCommandManager().unregisterCommandFrameworks(this)
-        voidLogger.info("插件已卸载.")
+        pluginLogger.info("插件已卸载.")
     }
 
     fun reload() {
+        saveDefaults()
         GermUtils.reload()
         guiManager.reload()
+        (animationManager as AnimationManagerImpl).reload()
     }
 }

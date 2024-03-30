@@ -1,9 +1,7 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
-import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScroll
-import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.api.common.gui.component.Component
@@ -12,7 +10,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.ScrollBox
 import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ScrollBoxJerm(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: GermGuiScroll) :
+class ScrollBoxJerm(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScroll) :
     BaseJermComponentGroup<GermGuiScroll>(gui, parent, handle, handle), ScrollBox {
     class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar,
         Component<GermGuiButton> by button {

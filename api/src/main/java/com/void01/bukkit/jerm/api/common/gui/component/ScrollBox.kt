@@ -2,7 +2,6 @@ package com.void01.bukkit.jerm.api.common.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
 import com.germ.germplugin.api.dynamic.gui.GermGuiScroll
-import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 
 interface ScrollBox : JermComponentGroup<GermGuiScroll> {
     interface ScrollBar : PseudoComponent<GermGuiButton> {

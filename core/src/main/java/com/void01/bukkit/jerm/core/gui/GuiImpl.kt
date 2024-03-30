@@ -11,21 +11,27 @@ import com.void01.bukkit.jerm.core.gui.component.RootComponentImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import org.bukkit.entity.Player
 import java.io.File
+import java.util.UUID
 
 class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui,
     ComponentGroup {
-    override var id: String = handle.guiName
+    override val id: String = handle.guiName
+    override val instanceId: String = "jerm-gui-$id-instance-${UUID.randomUUID()}"
     override var onCloseListener: Gui.OnCloseListener? = null
     override var onOpenListener: Gui.OnOpenListener? = null
     override var onGuiClickListener: Gui.OnClickListener? = null
     override val rootComponent: RootComponent = RootComponentImpl(this)
+
+/*    init {
+        handle.guiName = instanceId
+    }*/
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
      * @param cover 覆盖
      */
     override fun openAsGui(bukkitPlayer: Player, cover: Boolean) {
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+        (plugin.jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
 
         if (cover) {
             handle.openGui(bukkitPlayer)
@@ -35,7 +41,7 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
-        (plugin.playerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+        (plugin.jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
         handle.openHud(bukkitPlayer)
     }
 

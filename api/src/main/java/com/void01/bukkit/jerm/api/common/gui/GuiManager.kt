@@ -2,6 +2,7 @@ package com.void01.bukkit.jerm.api.common.gui
 
 import com.void01.bukkit.jerm.api.common.gui.component.Texture
 import com.void01.bukkit.jerm.api.common.gui.extension.component.ProgressBar
+import org.bukkit.entity.Player
 import java.io.InputStream
 
 interface GuiManager {
@@ -36,4 +37,5 @@ interface GuiManager {
     fun saveGuiFile(inputStream: InputStream, fileName: String, overwrite: Boolean)
 
     fun createHorizontalProgressBar(texture: Texture): ProgressBar
+    fun sendHudMessage(bukkitPlayer: Player, anchorName: String, message: String)
 }

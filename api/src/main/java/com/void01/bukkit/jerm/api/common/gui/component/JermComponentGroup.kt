@@ -5,4 +5,4 @@ package com.void01.bukkit.jerm.api.common.gui.component
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 
-interface JermComponentGroup<out T : GermGuiPart<*>> : Component<T>, ComponentGroup
+interface JermComponentGroup<T : GermGuiPart<*>> : Component<T>, ComponentGroup

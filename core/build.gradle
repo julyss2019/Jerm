@@ -1,20 +1,17 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-version = '1.2.1-alpha'
-
 dependencies {
     implementation project(':api')
-    compileOnly 'com.void01.bukkit:void-framework-bukkit-api:1.0.0'
-    compileOnly 'com.void01.bukkit:void-framework-bukkit-api-legacy:1.0.0'
+    compileOnly 'com.void01.bukkit:void-framework-bukkit-api:2.1.6-alpha.5'
+    compileOnly 'com.void01.bukkit:void-framework-bukkit-api-legacy:2.1.6-alpha.5'
+    compileOnly 'com.void01.bukkit:void-framework-bukkit-common:2.1.6-alpha.5'
 }
 
 shadowJar {
-    String prefix = 'com.void01.bukkit.jerm.core.libs.'
-
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set('')
 
-    relocate('kotlin', prefix + 'kotlin')
+    relocate('kotlin', 'kotlin.v1_9_20')
 }
 
 processResources {

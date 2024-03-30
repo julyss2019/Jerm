@@ -1,14 +1,13 @@
 package com.void01.bukkit.jerm.core.gui
 
 import com.germ.germplugin.api.dynamic.gui.*
-import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.gui.component.*
 
 object HandleToComponentConverter {
-    fun convert(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: GermGuiPart<*>): Component<*> {
+    fun convert(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiPart<*>): Component<*> {
         return when (handle::class.java) {
             GermGuiButton::class.java -> ButtonImpl(gui, parent, handle as GermGuiButton)
             GermGuiLabel::class.java -> LabelImpl(gui, parent, handle as GermGuiLabel)

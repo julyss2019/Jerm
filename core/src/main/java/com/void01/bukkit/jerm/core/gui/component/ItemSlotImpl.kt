@@ -1,16 +1,14 @@
 package com.void01.bukkit.jerm.core.gui.component
 
-import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
-import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
-import java.util.UUID
+import java.util.*
 
-class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: GermGuiSlot) :
+class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot) :
     BaseComponent<GermGuiSlot>(gui, parent, handle), ItemSlot {
 
     @Deprecated("改为 itemStack")

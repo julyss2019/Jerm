@@ -1,14 +1,16 @@
 package com.void01.bukkit.jerm.core.gui
 
-import com.void01.bukkit.jerm.api.common.gui.Gui
-import com.void01.bukkit.jerm.core.JermPlugin
-import com.void01.bukkit.jerm.core.util.GermUtils
+import com.germ.germplugin.api.GermPacketAPI
+import com.germ.germplugin.api.HudMessageType
 import com.github.julyss2019.bukkit.voidframework.logging.logger.Logger
+import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.component.Texture
 import com.void01.bukkit.jerm.api.common.gui.extension.component.ProgressBar
+import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.extension.ProgressBarImpl
-import org.bukkit.scheduler.BukkitRunnable
+import com.void01.bukkit.jerm.core.util.GermUtils
+import org.bukkit.entity.Player
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -17,18 +19,9 @@ import java.nio.file.StandardCopyOption
 
 
 class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
-    private val logger: Logger = plugin.voidLogger
+    private val logger = plugin.pluginLogger
     private val guiParser = plugin.guiParser
     private val guiMap = mutableMapOf<String, Gui>()
-
-    init {
-        // 等待萌芽载入
-        object : BukkitRunnable() {
-            override fun run() {
-                load()
-            }
-        }.runTaskLater(plugin, 40L)
-    }
 
     override fun reload() {
         guiMap.clear()
@@ -53,8 +46,8 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
 
         logger.info("载入了 " + guiMap.size + " 个 GUI: ")
         getGuis().forEach {
-            logger.info("- ${it.id}")
-        }
+                logger.info("- ${it.id}")
+            }
     }
 
     override fun existsGui(id: String): Boolean {
@@ -87,5 +80,9 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
 
     override fun getGui(id: String): Gui? {
         return guiMap[id]?.clone()
+    }
+
+    override fun sendHudMessage(bukkitPlayer: Player, anchorName: String, message: String) {
+        GermPacketAPI.sendHudMessage(bukkitPlayer, HudMessageType.ANCHOR, "${anchorName}<->$message")
     }
 }

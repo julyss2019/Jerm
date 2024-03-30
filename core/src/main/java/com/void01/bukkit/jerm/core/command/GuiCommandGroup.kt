@@ -25,7 +25,7 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
 
     init {
         guiManager = plugin.guiManager
-        jermPlayerManager = plugin.playerManager
+        jermPlayerManager = plugin.jermPlayerManager
     }
 
     @CommandBody(value = "debug", description = "开关 GUI 调试模式", senders = [SenderType.PLAYER])

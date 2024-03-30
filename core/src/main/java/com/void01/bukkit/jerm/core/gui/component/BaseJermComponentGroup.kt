@@ -11,17 +11,17 @@ import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
 abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     gui: Gui,
-    override val parent: JermComponentGroup<GermGuiPart<*>>?,
+    override val parent: JermComponentGroup<*>?,
     override val handle: T,
-    val containerHandle: IGuiPartContainer
+    private val containerHandle: IGuiPartContainer
 ) : BaseComponent<T>(gui, parent, handle), JermComponentGroup<T> {
     companion object {
-        private fun getComponentsRecursively0(jermComponentGroup: JermComponentGroup<GermGuiPart<*>>): List<Component<*>> {
+        private fun getComponentsRecursively0(jermComponentGroup: JermComponentGroup<*>): List<Component<*>> {
             val list = mutableListOf<Component<*>>()
 
             jermComponentGroup.components.forEach {
                 if (it is ComponentGroup) {
-                    list.addAll(getComponentsRecursively0(it as JermComponentGroup<GermGuiPart<*>>))
+                    list.addAll(getComponentsRecursively0(it as JermComponentGroup<*>))
                 } else {
                     list.add(it)
                 }

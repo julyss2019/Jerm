@@ -8,6 +8,6 @@ import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
 interface Context {
     val guiParser: GuiParser
     val guiManager: GuiManager
-    val playerManager: JermPlayerManager
+    val jermPlayerManager: JermPlayerManager
     val animationManager: AnimationManager
 }

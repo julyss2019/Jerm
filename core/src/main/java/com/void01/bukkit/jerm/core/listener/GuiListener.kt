@@ -14,6 +14,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
+import com.void01.bukkit.jerm.core.util.MessageUtils
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -26,7 +27,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         }
     }
 
-    private val jermPlayerManager = plugin.playerManager
+    private val jermPlayerManager = plugin.jermPlayerManager
 
     private fun resolveComponent(
         usingGui: Gui,
@@ -69,25 +70,31 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     // LEFT, MIDDLE, RIGHT, SHIFT
     @EventHandler
     fun onSlotClick(event: GermGuiSlotClickEvent) {
-        val germEventType = event.eventType
-        val clickType = when (germEventType) {
-            GermGuiSlot.EventType.LEFT_CLICK, GermGuiSlot.EventType.SHIFT_LEFT_CLICK -> Component.ClickType.LEFT
-            GermGuiSlot.EventType.RIGHT_CLICK, GermGuiSlot.EventType.SHIFT_RIGHT_CLICK -> Component.ClickType.RIGHT
-            GermGuiSlot.EventType.MIDDLE_CLICK, GermGuiSlot.EventType.SHIFT_MILLE_CLICK -> Component.ClickType.MIDDLE
-            else -> return
-        }
-        val jermPlayer = jermPlayerManager.getPlayer(event.player)
-        val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
-        val resolvedComponent = resolveComponent(usingGui, event.germGuiSlot) as ItemSlot
-        val isShift = parseIsShiftClick(germEventType)
+        try {
+            val germEventType = event.eventType
+            val clickType = when (germEventType) {
+                GermGuiSlot.EventType.LEFT_CLICK, GermGuiSlot.EventType.SHIFT_LEFT_CLICK -> Component.ClickType.LEFT
+                GermGuiSlot.EventType.RIGHT_CLICK, GermGuiSlot.EventType.SHIFT_RIGHT_CLICK -> Component.ClickType.RIGHT
+                GermGuiSlot.EventType.MIDDLE_CLICK, GermGuiSlot.EventType.SHIFT_MILLE_CLICK -> Component.ClickType.MIDDLE
+                else -> return
+            }
+            val jermPlayer = jermPlayerManager.getPlayer(event.player)
+            val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
+            val resolvedComponent = resolveComponent(usingGui, event.germGuiSlot) as ItemSlot
+            val isShift = parseIsShiftClick(germEventType)
 
-        // 萌芽如果设置 interact 为 false 则连事件都不会触发了，这造成了开发不便
-        // Jerm interactive 并不会调用萌芽的 setInteract 的方法，而是这里进行特殊处理
-        if (!resolvedComponent.canTakeAway) {
-            event.isCancelled = true
-        }
+            // 萌芽如果设置 interact 为 false 则连事件都不会触发了，这造成了开发不便
+            // Jerm interactive 并不会调用萌芽的 setInteract 的方法，而是这里进行特殊处理
+            if (!resolvedComponent.canTakeAway) {
+                event.isCancelled = true
+            }
 
-        fireComponentClickListener(resolvedComponent, clickType, isShift)
+            fireComponentClickListener(resolvedComponent, clickType, isShift)
+        } catch (ex: Exception) {
+            MessageUtils.sendMessage(event.player, "发生了致命性错误.")
+            event.isCancelled = true // 防止出现意外，造成物品随便拿
+            throw RuntimeException(ex)
+        }
     }
 
     // LEFT, MIDDLE, RIGHT, SHIFT

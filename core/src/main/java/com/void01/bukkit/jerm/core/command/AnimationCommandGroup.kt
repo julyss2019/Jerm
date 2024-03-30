@@ -17,7 +17,6 @@ class AnimationCommandGroup : CommandGroup {
         @CommandParam(description = "动画") animation: String,
         @CommandParam(description = "表演者", optional = true) performer: Player?,
         @CommandParam(description = "速度(Float: 1)", optional = true) speed: Float?,
-        @CommandParam(description = "反转(Boolean: false)", optional = true) reverse: Boolean?,
     ) {
         if (performer == null) {
             if (sender !is Player) {
@@ -27,16 +26,11 @@ class AnimationCommandGroup : CommandGroup {
         }
 
         val actualPerformer = performer ?: sender as Player
-        Jerm.getAnimationManager().playAnimation(
+
+        Jerm.getAnimationManager().playAnimationToSelfAndNearbyPlayers(
             actualPerformer,
-            actualPerformer.getNearbyEntities(256.0, 255.0, 256.0)
-                .apply {
-                    add(actualPerformer)
-                }
-                .filterIsInstance<Player>(),
             animation,
-            speed ?: 1F,
-            reverse ?: false
+            speed ?: 1F
         )
     }
 }

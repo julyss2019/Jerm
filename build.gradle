@@ -4,7 +4,10 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
 }
 
+
 allprojects {
+    version = '1.2.2-alpha.2'
+
     group 'com.void01.bukkit'
 
     apply plugin: 'java'

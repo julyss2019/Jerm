@@ -10,7 +10,7 @@ import org.bukkit.event.Listener
 class GuiDebugListener(private val plugin: JermPlugin) : Listener {
     @EventHandler
     fun onGermGuiClickEvent(event: GermGuiClickEvent) {
-        val player = plugin.playerManager.getPlayer(event.player)
+        val player = plugin.jermPlayerManager.getPlayer(event.player)
 
         if (!player.isScreenDebugEnabled) {
             return

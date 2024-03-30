@@ -13,7 +13,7 @@ public class JermPlayerParamParser extends BaseParamParser {
     public JermPlayerParamParser(JermPlugin plugin) {
         super(new Class[]{JermPlayer.class});
 
-        this.jermPlayerManager = plugin.getPlayerManager();
+        this.jermPlayerManager = plugin.getJermPlayerManager();
     }
 
     @Override

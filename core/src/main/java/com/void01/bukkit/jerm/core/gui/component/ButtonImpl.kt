@@ -1,14 +1,12 @@
 package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
-import com.germ.germplugin.api.dynamic.gui.GermGuiPart
-import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ButtonImpl(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: GermGuiButton) :
+class ButtonImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiButton) :
     BaseComponent<GermGuiButton>(gui, parent, handle), Button {
     override var texts: List<String>
         get() = handle.texts
@@ -16,6 +14,7 @@ class ButtonImpl(gui: Gui, parent: JermComponentGroup<GermGuiPart<*>>?, handle: 
             handle.texts = value
         }
     private var germHandlersRegistered = false
+    @Deprecated("弃用")
     override var onButtonClickListener: Button.OnClickListener? = null
         set(value) {
             registerGermHandlers()
