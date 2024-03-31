@@ -90,4 +90,20 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     override fun addComponent(componentHandle: GermGuiPart<*>) {
         addComponent(HandleToComponentConverter.convert(gui, this, componentHandle))
     }
+
+    override fun <T : Component<*>> getComponentByPathOrThrow(path: String, type: Class<T>): T {
+        return getComponentByPath(path, type) ?: throw IllegalArgumentException("Unable to find Component by path: $path")
+    }
+
+    override fun <T : Component<*>> getComponentByPath(path: String, type: Class<T>): T? {
+        val array = path.split(".")
+
+        var parent: ComponentGroup = gui
+
+        for (node in array.dropLast(1)) {
+            parent = parent.getComponent(node, Component::class.java) as ComponentGroup? ?: return null
+        }
+
+        return parent.getComponentOrThrow(array.last(), type)
+    }
 }

@@ -33,4 +33,16 @@ interface ComponentGroup : Cloneable {
     fun addComponent(componentHandle: GermGuiPart<*>)
 
     fun existsComponent(id: String): Boolean
+
+    /**
+     * 使用路径获取控件
+     * @param path 路径表达式，使用点分法来表示，e.g. 'a.b.c'
+     */
+    fun <T : Component<*>> getComponentByPathOrThrow(path: String, type: Class<T>): T
+
+    /**
+     * 使用路径获取空间
+     * @param path 路径表达式，使用点分法来表示，e.g. 'a.b.c'
+     */
+    fun <T : Component<*>> getComponentByPath(path: String, type: Class<T>): T?
 }

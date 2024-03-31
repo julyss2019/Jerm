@@ -1,9 +1,6 @@
 package com.void01.bukkit.jerm.core.listener
 
-import com.germ.germplugin.api.dynamic.gui.GermGuiButton
-import com.germ.germplugin.api.dynamic.gui.GermGuiPart
-import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
-import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
+import com.germ.germplugin.api.dynamic.gui.*
 import com.germ.germplugin.api.event.gui.*
 import com.void01.bukkit.jerm.api.common.event.GuiCloseEvent
 import com.void01.bukkit.jerm.api.common.event.GuiOpenEvent
@@ -16,6 +13,7 @@ import com.void01.bukkit.jerm.core.gui.GuiImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import com.void01.bukkit.jerm.core.util.MessageUtils
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -131,8 +129,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             else -> return
         }
 
-        val resolvedComponent =
-            if (clickedComponentHandle == null) null else resolveComponent(usingGui, clickedComponentHandle)
+        val resolvedComponent = if (clickedComponentHandle == null) null else resolveComponent(usingGui, clickedComponentHandle)
 
         if (clickDown) {
             usingGui.onGuiClickListener?.onClickDown(resolvedComponent, clickType, event)
@@ -146,11 +143,11 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
                     onClickDown(clickType)
 
                     // 如果 GermGuiSlot.isInteract 为 false 则不会触发 GermGuiSlotEvent，则在这里补，但这里会缺少 Shift 的检测
-                    if (resolvedComponent is ItemSlot && resolvedComponent.interactive) {
+/*                    if (resolvedComponent is ItemSlot && resolvedComponent.interactive) {
                         return
                     }
 
-                    fireComponentClickListener(resolvedComponent, clickType, false)
+                    fireComponentClickListener(resolvedComponent, clickType, false)*/
                 } else {
                     onClickUp(clickType)
                 }

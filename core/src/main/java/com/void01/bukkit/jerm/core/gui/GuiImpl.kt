@@ -2,8 +2,8 @@ package com.void01.bukkit.jerm.core.gui
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
-import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
+import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.RootComponent
 import com.void01.bukkit.jerm.core.JermPlugin
@@ -11,7 +11,7 @@ import com.void01.bukkit.jerm.core.gui.component.RootComponentImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import org.bukkit.entity.Player
 import java.io.File
-import java.util.UUID
+import java.util.*
 
 class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui,
     ComponentGroup {
@@ -22,9 +22,9 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
     override var onGuiClickListener: Gui.OnClickListener? = null
     override val rootComponent: RootComponent = RootComponentImpl(this)
 
-/*    init {
-        handle.guiName = instanceId
-    }*/
+    /*    init {
+            handle.guiName = instanceId
+        }*/
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
@@ -89,6 +89,14 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
 
     override fun existsComponent(id: String): Boolean {
         return rootComponent.existsComponent(id)
+    }
+
+    override fun <T : Component<*>> getComponentByPathOrThrow(path: String, type: Class<T>): T {
+        return rootComponent.getComponentByPathOrThrow(path, type)
+    }
+
+    override fun <T : Component<*>> getComponentByPath(path: String, type: Class<T>): T? {
+        return rootComponent.getComponentByPath(path, type)
     }
     // delegate
 
