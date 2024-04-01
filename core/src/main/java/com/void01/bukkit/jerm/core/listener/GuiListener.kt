@@ -13,7 +13,6 @@ import com.void01.bukkit.jerm.core.gui.GuiImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import com.void01.bukkit.jerm.core.util.MessageUtils
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -47,22 +46,24 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             val pop = componentNodes.pop()
             val tmp = (currentComponent as ComponentGroup).getComponent(pop.indexName, Component::class.java)
 
-            currentComponent =
-                tmp ?: currentComponent.getPseudoComponentOrThrow(pop.indexName, Component::class.java) // 伪部件（滚动条）
+            currentComponent = tmp ?: currentComponent.getPseudoComponentOrThrow(pop.indexName, Component::class.java) // 伪部件（滚动条）
         }
 
         return currentComponent!!
     }
 
-    private fun fireComponentClickListener(
+    private fun fireClickListener(
         component: Component<*>,
         clickType: Component.ClickType,
         isShift: Boolean,
-    ) {
+    ) :Boolean {
         component.onClickListener?.run {
             onClick(clickType)
             onClick(clickType, isShift)
+            return onClick2(clickType, isShift)
         }
+
+        return false
     }
 
     // LEFT, MIDDLE, RIGHT, SHIFT
@@ -78,16 +79,10 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             }
             val jermPlayer = jermPlayerManager.getPlayer(event.player)
             val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
-            val resolvedComponent = resolveComponent(usingGui, event.germGuiSlot) as ItemSlot
+            val itemSlot = resolveComponent(usingGui, event.germGuiSlot) as ItemSlot
             val isShift = parseIsShiftClick(germEventType)
 
-            // 萌芽如果设置 interact 为 false 则连事件都不会触发了，这造成了开发不便
-            // Jerm interactive 并不会调用萌芽的 setInteract 的方法，而是这里进行特殊处理
-            if (!resolvedComponent.canTakeAway) {
-                event.isCancelled = true
-            }
-
-            fireComponentClickListener(resolvedComponent, clickType, isShift)
+            event.isCancelled = fireClickListener(itemSlot, clickType, isShift)
         } catch (ex: Exception) {
             MessageUtils.sendMessage(event.player, "发生了致命性错误.")
             event.isCancelled = true // 防止出现意外，造成物品随便拿
@@ -110,7 +105,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
         val resolvedComponent = resolveComponent(usingGui, event.germGuiButton)
 
-        fireComponentClickListener(resolvedComponent, clickType, isShift)
+        fireClickListener(resolvedComponent, clickType, isShift)
     }
 
     // LEFT, RIGHT, DOWN, UP
@@ -140,7 +135,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         if (resolvedComponent != null) {
             resolvedComponent.onClickListener?.run {
                 if (clickDown) {
-                    onClickDown(clickType)
+                    // onClickDown(clickType)
 
                     // 如果 GermGuiSlot.isInteract 为 false 则不会触发 GermGuiSlotEvent，则在这里补，但这里会缺少 Shift 的检测
 /*                    if (resolvedComponent is ItemSlot && resolvedComponent.interactive) {
@@ -149,7 +144,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
 
                     fireComponentClickListener(resolvedComponent, clickType, false)*/
                 } else {
-                    onClickUp(clickType)
+                    // onClickUp(clickType)
                 }
             }
         }

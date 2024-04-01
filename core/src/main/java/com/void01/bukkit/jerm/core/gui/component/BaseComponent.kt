@@ -17,7 +17,7 @@ abstract class BaseComponent<T : GermGuiPart<*>>(
         set(value) {
             handle.indexName = value
         }
-    override var enabled: Boolean
+    override var isEnabled: Boolean
         get() = handle.isEnable
         set(value) {
             handle.enable = value

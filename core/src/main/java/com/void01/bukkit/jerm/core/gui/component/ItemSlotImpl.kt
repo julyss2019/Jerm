@@ -21,12 +21,11 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         set(value) {
             handle.itemStack = value
         }
-    override var interactive: Boolean
+    override var isClickable: Boolean
         get() = handle.isInteract
         set(value) {
             handle.isInteract = value
         }
-    override var canTakeAway: Boolean = true
     override var binding: String?
         get() {
             return handle.identity
@@ -39,22 +38,5 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         return ItemSlotImpl(gui, parent, GermUtils.cloneGuiPart(handle).apply {
             identity = binding
         })
-    }
-
-    @Deprecated("改为 itemStack")
-    override var item: ItemStack?
-        get() = this.itemStack
-        set(value) {
-            this.itemStack = value
-        }
-
-    @Deprecated("弃用", ReplaceWith("binding"))
-    override fun setSlotId(id: String?) {
-        binding = id
-    }
-
-    @Deprecated("弃用", ReplaceWith("binding"))
-    override fun getSlotId(): String? {
-        return binding
     }
 }
