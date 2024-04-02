@@ -29,10 +29,6 @@ abstract class BaseComponent<T : GermGuiPart<*>>(
         }
     override var onClickListener: Component.OnClickListener? = null
 
-    override fun performClick(clickType: Component.ClickType) {
-        onClickListener?.onClick(clickType)
-    }
-
     override fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>? {
         return null
     }

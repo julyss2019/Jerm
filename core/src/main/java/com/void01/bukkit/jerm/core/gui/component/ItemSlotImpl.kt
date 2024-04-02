@@ -11,21 +11,27 @@ import org.bukkit.inventory.ItemStack
 // isInvalid = true, isInteract = false，无悬浮，无法拿走，GermGuiSlotClickEvent 不触发
 // isInvalid = false, isInteract = true，有悬浮，可以拿走，GermGuiSlotClickEvent 触发
 // isInvalid = false, isInteract = false，有悬浮，不能拿走，GermGuiSlotClickEvent 不触发
-/*
-需求：不允许拿走，但需要监听事件。需要设置 isInvalid = false, isInteract = true
- */
+// 一个很常见的需求：不可拿走，但要点击触发事件。
+// 解决方法：先设置 isInteract 为 true，在事件触发时判断 isClickable，若为 false 在事件触发时取消。
 class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot) :
     BaseComponent<GermGuiSlot>(gui, parent, handle), ItemSlot {
+    @Deprecated("命名不规范")
+    override var item: ItemStack?
+        get() = itemStack
+        set(value) {
+            itemStack = value
+        }
     override var itemStack: ItemStack?
         get() = handle.itemStack
         set(value) {
             handle.itemStack = value
         }
-    override var isClickable: Boolean
+    override var isInteractive: Boolean
         get() = handle.isInteract
         set(value) {
             handle.isInteract = value
         }
+    override var isClickable: Boolean = true
     override var binding: String?
         get() {
             return handle.identity
@@ -38,5 +44,15 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         return ItemSlotImpl(gui, parent, GermUtils.cloneGuiPart(handle).apply {
             identity = binding
         })
+    }
+
+    @Deprecated("命名不规范", replaceWith = ReplaceWith("binding = iD"))
+    override fun setSlotId(id: String?) {
+        binding = id
+    }
+
+    @Deprecated("命名不规范", replaceWith = ReplaceWith("binding"))
+    override fun getSlotId(): String? {
+        return binding
     }
 }

@@ -2,6 +2,8 @@ package com.void01.bukkit.jerm.api.common.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.void01.bukkit.jerm.api.common.gui.Gui
+import org.bukkit.event.Cancellable
+import org.bukkit.event.Event
 
 
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
@@ -27,18 +29,14 @@ interface Component<T : GermGuiPart<*>> : Cloneable {
     interface OnClickListener {
         fun onClick(clickType: ClickType) {}
 
-        fun onClick(clickType: ClickType, shift: Boolean) {}
+        fun onClick(clickType: ClickType, isShift: Boolean) {}
 
-        /** 点击事件（v2版本）
-         * @param isShift 是否 SHIFT
-         * @return 是否取消
-         */
-        fun onClick2(clickType: ClickType, isShift: Boolean): Boolean {
-            return false
-        }
+        fun onClick(clickType: ClickType, isShift: Boolean, event: Event) {}
+
+        fun onClickDown(clickType: ClickType) {}
+
+        fun onClickUp(clickType: ClickType) {}
     }
-
-    fun performClick(clickType: ClickType)
 
     fun disable() {
         isEnabled = false
