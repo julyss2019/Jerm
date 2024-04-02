@@ -31,7 +31,7 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         set(value) {
             handle.isInteract = value
         }
-    override var isClickable: Boolean = true
+    override var isViewOnly: Boolean = true
     override var binding: String?
         get() {
             return handle.identity

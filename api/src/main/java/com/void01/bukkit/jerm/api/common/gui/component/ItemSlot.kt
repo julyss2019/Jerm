@@ -11,17 +11,17 @@ interface ItemSlot : Component<GermGuiSlot> {
     var binding: String?
 
     /**
-     * 是否可交互
+     * 是否可交互（萌芽物品槽自带属性）
      * 仅当 isInteractive 为 true 时物品才能被拿走，GermGuiSlotClickEvent 才会触发
      */
     var isInteractive: Boolean
 
     /**
-     * 是否可以点击（拿走物品）
+     * 是否只供观看，无法拿走（拓展属性）
      * 仅当 isInteractive 为 true 时有效
      * 不管值为 true 或 false，onClickListener 永远会触发
      */
-    var isClickable: Boolean
+    var isViewOnly: Boolean
 
     public override fun clone(): ItemSlot
 
