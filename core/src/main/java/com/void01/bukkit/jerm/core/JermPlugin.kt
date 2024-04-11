@@ -21,6 +21,7 @@ import com.void01.bukkit.jerm.core.gui.GuiManagerImpl
 import com.void01.bukkit.jerm.core.gui.GuiParserImpl
 import com.void01.bukkit.jerm.core.listener.GuiDebugListener
 import com.void01.bukkit.jerm.core.listener.GuiListener
+import com.void01.bukkit.jerm.core.listener.PlayerListener
 import com.void01.bukkit.jerm.core.player.JermPlayerManagerImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
 import com.void01.bukkit.voidframework.api.common.extension.VoidPlugin
@@ -68,6 +69,7 @@ class JermPlugin : VoidPlugin(), Context {
 
         Bukkit.getPluginManager().registerEvents(GuiDebugListener(this), this)
         Bukkit.getPluginManager().registerEvents(GuiListener(this), this)
+        Bukkit.getPluginManager().registerEvents(PlayerListener(this), this)
 
         // 等待萌芽载入
         object : BukkitRunnable() {

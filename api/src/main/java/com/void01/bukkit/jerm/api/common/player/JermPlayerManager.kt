@@ -1,12 +1,15 @@
 package com.void01.bukkit.jerm.api.common.player
 
-import org.bukkit.OfflinePlayer
-import java.util.UUID
+import org.bukkit.entity.Player
 
 interface JermPlayerManager {
-    fun getPlayer(playerName: String): JermPlayer
+    @Deprecated("命名不规范", ReplaceWith("getPlayer(playerName)"))
+    fun getPlayer(playerName: String): JermPlayer = getPlayer(playerName)
 
-    fun getPlayer(offlinePlayer: OfflinePlayer): JermPlayer
+    @Deprecated("命名不规范", ReplaceWith("getJermPlayer(bukkitPlayer)"))
+    fun getPlayer(bukkitPlayer: Player): JermPlayer = getJermPlayer(bukkitPlayer)
 
-    fun getPlayer(uuid: UUID): JermPlayer
+    fun getJermPlayer(playerName: String): JermPlayer
+
+    fun getJermPlayer(bukkitPlayer: Player): JermPlayer
 }

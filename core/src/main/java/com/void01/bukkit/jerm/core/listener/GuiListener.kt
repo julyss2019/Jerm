@@ -94,8 +94,8 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             val germEventType = event.eventType
             val clickType = parseClickType(event.eventType) ?: return
             val isShift = parseIsShiftClick(germEventType)
-            val jermPlayer = jermPlayerManager.getPlayer(event.player)
-            val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
+            val jermPlayer = jermPlayerManager.getPlayer(event.player) as JermPlayerImpl
+            val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
             val itemSlot = findComponent(usingGui, event.germGuiSlot) as ItemSlot
 
             if (!itemSlot.isViewOnly) {
@@ -114,10 +114,10 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     @EventHandler
     fun onButtonClick(event: GermGuiButtonEvent) {
         val germEventType = event.eventType
-        val jermPlayer = jermPlayerManager.getPlayer(event.player)
+        val jermPlayer = jermPlayerManager.getPlayer(event.player) as JermPlayerImpl
         val clickType = parseClickType(event.eventType) ?: return
         val isShift = parseIsShiftClick(germEventType)
-        val usingGui = jermPlayer.getUsingGui(event.germGuiScreen) ?: return
+        val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
         val button = findComponent(usingGui, event.germGuiButton)
 
         fireClickListener(button, clickType, isShift, event)
@@ -130,7 +130,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val bukkitPlayer = event.player
         val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
         val guiHandle = event.clickedGuiScreen
-        val usingGui = jermPlayer.getUsingGui(guiHandle) as GuiImpl? ?: return
+        val usingGui = jermPlayer.getUsingGuiOrNull(guiHandle) as GuiImpl? ?: return
         val clickedComponentHandle = event.clickedPart
         val isClickDown = germEventType.name.endsWith("RELEASE")
         val clickType = parseClickType(germEventType) ?: return
@@ -155,11 +155,11 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
 
         // 这里仅处理没有使用 Jerm 打开的 GUI，将为其手动实例化一个 GUI
-        if (jermPlayer.getUsingGui(handle) == null) {
+        if (jermPlayer.getUsingGuiOrNull(handle) == null) {
             jermPlayer.addUsingGui(GuiImpl(handle, null, plugin))
         }
 
-        val gui = jermPlayer.getUsingGui(handle)!!
+        val gui = jermPlayer.getUsingGuiOrNull(handle)!!
 
         gui.onOpenListener?.onOpen()
         Bukkit.getPluginManager().callEvent(GuiOpenEvent(jermPlayer, gui))
@@ -170,7 +170,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player
         val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
-        val usingGui = jermPlayer.getUsingGui(handle)
+        val usingGui = jermPlayer.getUsingGuiOrNull(handle)
 
         usingGui?.onCloseListener?.onClose()
         jermPlayer.removeUsingGui(event.germGuiScreen)

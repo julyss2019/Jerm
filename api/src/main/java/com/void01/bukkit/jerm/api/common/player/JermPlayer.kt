@@ -1,20 +1,20 @@
 package com.void01.bukkit.jerm.api.common.player
 
-import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import org.bukkit.entity.Player
 
 interface JermPlayer {
-    var isScreenDebugEnabled: Boolean
+    val bukkitPlayer: Player
 
-    fun getUsingGuis() : List<Gui>
+    fun getUsingGui(id: String): Gui
 
+    fun getUsingGuiOrNull(id: String): Gui?
+
+    fun getUsingGuis(): List<Gui>
+
+    @Deprecated(message = "Player 现在在 JermPlayer 生命周期内永远在线")
     fun isOnline(): Boolean
 
-    fun getBukkitPlayer(): Player?
-
-    fun getOnlineBukkitPlayer() : Player
-
-    fun closeGuis()
-    fun getUsingGui(handle: GermGuiScreen): Gui?
+    @Deprecated(message = "Player 现在在 JermPlayer 生命周期内永远在线")
+    fun getOnlineBukkitPlayer(): Player
 }

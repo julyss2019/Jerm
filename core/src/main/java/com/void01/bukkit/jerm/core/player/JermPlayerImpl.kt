@@ -2,20 +2,16 @@ package com.void01.bukkit.jerm.core.player
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.germ.germplugin.api.dynamic.gui.GuiManager
-import com.github.julyss2019.bukkit.voidframework.common.Messages
-import com.github.julyss2019.bukkit.voidframework.common.Validator
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import com.void01.bukkit.jerm.core.JermPlugin
-import org.bukkit.Bukkit
+import com.void01.bukkit.voidframework.common.kotlin.getNameWithUuid
 import org.bukkit.entity.Player
-import java.util.*
 
-class JermPlayerImpl(val uuid: UUID, val plugin: JermPlugin) : JermPlayer {
-    override var isScreenDebugEnabled = false
+class JermPlayerImpl(override val bukkitPlayer: Player, val plugin: JermPlugin) : JermPlayer {
     private val usingGuis = mutableListOf<Gui>()
 
-    override fun getUsingGui(handle: GermGuiScreen): Gui? {
+    fun getUsingGuiOrNull(handle: GermGuiScreen): Gui? {
         return usingGuis.firstOrNull { it.handle == handle }
     }
 
@@ -29,40 +25,37 @@ class JermPlayerImpl(val uuid: UUID, val plugin: JermPlugin) : JermPlayer {
         }
     }
 
-    override fun getOnlineBukkitPlayer(): Player {
-        return getBukkitPlayer() ?: throw RuntimeException("Player is offline")
+    override fun getUsingGui(id: String): Gui {
+        return getUsingGuiOrNull(id) ?: throw IllegalArgumentException("Unable to get using GUI by id: $id")
+    }
+
+    override fun getUsingGuiOrNull(id: String): Gui? {
+        return usingGuis.firstOrNull { it.id == id }
     }
 
     override fun getUsingGuis(): List<Gui> {
-        checkOnline()
-
         return usingGuis.toList()
     }
 
-    override fun getBukkitPlayer(): Player? = Bukkit.getPlayer(uuid)
-
-    override fun isOnline(): Boolean {
-        return getBukkitPlayer() != null
-    }
-
-    fun checkOnline() {
-        Validator.checkState(isOnline(), "player is offline")
-    }
-
-    fun sendDebugMessage(message: String) {
-        checkOnline()
-
-        if (isScreenDebugEnabled) {
-            val processed = "&a[Jerm-Debug] &f$message"
-
-            Messages.sendColoredMessage(getBukkitPlayer()!!, processed)
-            Messages.sendColoredMessage(Bukkit.getConsoleSender(), processed)
-        }
-    }
-
-    override fun closeGuis() {
-        GuiManager.getOpenedAllGui(getBukkitPlayer()!!).forEach {
+    fun closeGuis() {
+        GuiManager.getOpenedAllGui(bukkitPlayer).forEach {
             it.close()
         }
+    }
+
+    fun debug(message: String) {
+        plugin.pluginLogger.debug("[${bukkitPlayer.getNameWithUuid()}] $message")
+    }
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Player 现在在 JermPlayer 生命周期内永远在线")
+    override fun getOnlineBukkitPlayer(): Player {
+        return bukkitPlayer
+    }
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Player 现在在 JermPlayer 生命周期内永远在线")
+    override fun isOnline(): Boolean {
+        return bukkitPlayer.isOnline
     }
 }

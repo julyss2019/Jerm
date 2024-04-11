@@ -47,6 +47,7 @@ interface Component<T : GermGuiPart<*>> : Cloneable {
     }
 
     fun <T : Component<*>> getPseudoComponentOrThrow(id: String, clazz: Class<T>): Component<*> {
+        @Suppress("UNCHECKED_CAST")
         return getPseudoComponent(id, clazz) as T? ?: throw RuntimeException("Unable to find component: $id")
     }
 

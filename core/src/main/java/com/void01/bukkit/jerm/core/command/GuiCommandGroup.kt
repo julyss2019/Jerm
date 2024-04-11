@@ -1,40 +1,25 @@
 package com.void01.bukkit.jerm.core.command
 
-import com.void01.bukkit.jerm.api.common.gui.Gui
-import com.void01.bukkit.jerm.core.JermPlugin
-import com.void01.bukkit.jerm.core.util.GermUtils
-import com.void01.bukkit.jerm.core.util.MessageUtils
-import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import com.github.julyss2019.bukkit.voidframework.command.CommandGroup
-import com.github.julyss2019.bukkit.voidframework.command.SenderType
 import com.github.julyss2019.bukkit.voidframework.command.annotation.CommandBody
 import com.github.julyss2019.bukkit.voidframework.command.annotation.CommandMapping
 import com.github.julyss2019.bukkit.voidframework.command.annotation.CommandParam
+import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
+import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
+import com.void01.bukkit.jerm.core.util.GermUtils
+import com.void01.bukkit.jerm.core.util.MessageUtils
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
 @CommandMapping(value = "gui")
 class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
-    private val jermPlayerManager: JermPlayerManager
-    private val guiManager: GuiManager
-
-    init {
-        guiManager = plugin.guiManager
-        jermPlayerManager = plugin.jermPlayerManager
-    }
-
-    @CommandBody(value = "debug", description = "开关 GUI 调试模式", senders = [SenderType.PLAYER])
-    fun debug(player: Player) {
-        val jermPlayer = jermPlayerManager.getPlayer(player) as JermPlayerImpl
-
-        jermPlayer.isScreenDebugEnabled = !jermPlayer.isScreenDebugEnabled
-        MessageUtils.sendMessage(player, "当前 GUI 调试模式: ${jermPlayer.isScreenDebugEnabled}.")
-    }
+    private val jermPlayerManager: JermPlayerManager = plugin.jermPlayerManager
+    private val guiManager: GuiManager = plugin.guiManager
 
     @CommandBody(value = "listGUIs", description = "列出所有 GUI")
     fun list(
@@ -64,11 +49,6 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
                     MessageUtils.sendCommandRawMessage(sender as Player, "$processedMessage &c[点击打开]", "/jerm gui openGUI ${it.id}")
                 }
             }
-    }
-
-    @CommandBody(value = "closeGUIs", description = "关闭所有 GUI")
-    fun closeGUIs(sender: CommandSender, @CommandParam(description = "玩家") jermPlayer: JermPlayer) {
-        jermPlayer.closeGuis()
     }
 
     @CommandBody(value = "listUsingGUIs", description = "列出玩家所有正在使用的 GUI")

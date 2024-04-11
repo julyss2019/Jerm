@@ -19,7 +19,7 @@ interface ItemSlot : Component<GermGuiSlot> {
     /**
      * 是否只供观看，无法拿走（拓展属性）
      * 仅当 isInteractive 为 true 时有效
-     * 不管值为 true 或 false，onClickListener 永远会触发
+     * isViewOnly = true 时，onClickListener 仍然会触发
      */
     var isViewOnly: Boolean
 

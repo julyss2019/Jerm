@@ -1,46 +1,29 @@
 package com.void01.bukkit.jerm.core.player
 
-import com.void01.bukkit.jerm.core.JermPlugin
-import com.github.julyss2019.bukkit.voidframework.common.Players
 import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
+import com.void01.bukkit.jerm.core.JermPlugin
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class JermPlayerManagerImpl(private val plugin: JermPlugin) : JermPlayerManager {
     private val jermPlayerImplMap: MutableMap<UUID, JermPlayerImpl> = ConcurrentHashMap()
 
-    fun forceUnloadPlayer(jermPlayerImpl: JermPlayerImpl) {
-        forceUnloadPlayer(jermPlayerImpl.uuid)
+    fun unloadPlayer(bukkitPlayer: Player) {
+        jermPlayerImplMap.remove(bukkitPlayer.uniqueId)
     }
 
-    fun forceUnloadPlayer(id: UUID) {
-        jermPlayerImplMap.remove(id)
+    override fun getJermPlayer(playerName: String): JermPlayer {
+        return getPlayer(Bukkit.getPlayer(playerName) ?: throw IllegalArgumentException("Player is offline"))
     }
 
-    fun unloadPlayer(jermPlayerImpl: JermPlayerImpl) {
-        unloadPlayer(jermPlayerImpl.uuid)
-    }
+    override fun getJermPlayer(bukkitPlayer: Player): JermPlayer {
+        val uuid = bukkitPlayer.uniqueId
 
-    fun unloadPlayer(uuid: UUID) {
-        if (!Players.isOnline(uuid)) {
-            jermPlayerImplMap.remove(uuid)
-        }
-    }
-
-    override fun getPlayer(playerName: String): JermPlayer {
-        return getPlayer(Bukkit.getOfflinePlayer(playerName))
-    }
-
-    override fun getPlayer(offlinePlayer: OfflinePlayer): JermPlayer {
-        return getPlayer(offlinePlayer.uniqueId)
-    }
-
-    override fun getPlayer(uuid: UUID): JermPlayer {
         if (!jermPlayerImplMap.containsKey(uuid)) {
-            jermPlayerImplMap[uuid] = JermPlayerImpl(uuid, plugin)
+            jermPlayerImplMap[uuid] = JermPlayerImpl(bukkitPlayer, plugin)
         }
 
         return jermPlayerImplMap[uuid]!!
