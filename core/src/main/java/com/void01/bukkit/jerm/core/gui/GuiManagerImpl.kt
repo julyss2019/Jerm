@@ -71,7 +71,7 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
     }
 
     override fun createHorizontalProgressBar(texture: Texture): ProgressBar {
-        return ProgressBarImpl(plugin, texture, ProgressBar.Orientation.VERTICAL)
+        return ProgressBarImpl(plugin, texture, ProgressBar.Orientation.HORIZONTAL)
     }
 
     override fun getGuis(): List<Gui> {
