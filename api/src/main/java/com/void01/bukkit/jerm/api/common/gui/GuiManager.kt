@@ -38,5 +38,7 @@ interface GuiManager {
 
     fun createHorizontalProgressBar(texture: Texture): ProgressBar
 
+    fun createVerticalProgressBar(texture: Texture) : ProgressBar
+
     fun sendHudMessage(bukkitPlayer: Player, anchorName: String, message: String)
 }
