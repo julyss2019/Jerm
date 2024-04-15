@@ -152,7 +152,13 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     fun onOpen(event: GermGuiOpenedEvent) {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player
-        val jermPlayer = jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl
+
+        // Fix: 疑似萌芽 Bug，掉线后还会触发 GUI 打开时间
+        if (!bukkitPlayer.isOnline) {
+            return
+        }
+
+        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl
 
         // 这里仅处理没有使用 Jerm 打开的 GUI，将为其手动实例化一个 GUI
         if (jermPlayer.getUsingGuiOrNull(handle) == null) {

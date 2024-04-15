@@ -10,7 +10,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.ScrollBox
 import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ScrollBoxJerm(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScroll) :
+class ScrollBoxImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScroll) :
     BaseJermComponentGroup<GermGuiScroll>(gui, parent, handle, handle), ScrollBox {
     class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar,
         Component<GermGuiButton> by button {
@@ -36,7 +36,7 @@ class ScrollBoxJerm(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScr
     }
 
     override fun clone(): ScrollBox {
-        return ScrollBoxJerm(gui, parent, GermUtils.cloneGuiPart(handle))
+        return ScrollBoxImpl(gui, parent, GermUtils.cloneGuiPart(handle))
     }
 
     override fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>? {

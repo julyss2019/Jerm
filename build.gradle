@@ -4,7 +4,7 @@ plugins {
 }
 
 allprojects {
-    version '1.3.0-alpha.1'
+    version '1.3.0-alpha.2'
     group 'com.void01.bukkit'
 
     repositories {
