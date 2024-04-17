@@ -22,8 +22,8 @@ interface ProgressBar {
     var animationDurationFunction: AnimationDurationFunction
     var maxWidth: String
     var maxHeight: String
-    var maxEndU: Int
-    var maxEndV: Int
+    var maxEndU: Int?
+    var maxEndV: Int?
 
     fun setProgress(progress: Double)
 

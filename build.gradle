@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
 }
 
@@ -21,6 +20,21 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'org.jetbrains.kotlin.jvm'
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+
+        options.encoding = 'UTF-8'
+        options.compilerArgs.add('-parameters')
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = '1.8'
+            javaParameters = true
+        }
+    }
 
     dependencies {
         compileOnly fileTree(dir: new File(rootDir, 'libs'), includes: ['*jar'])

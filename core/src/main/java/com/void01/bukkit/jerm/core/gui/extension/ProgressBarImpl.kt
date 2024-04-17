@@ -27,12 +27,12 @@ class ProgressBarImpl(
             flush()
             field = value
         }
-    override var maxEndU: Int = -1
+    override var maxEndU: Int? = null
         set(value) {
             flush()
             field = value
         }
-    override var maxEndV: Int = -1
+    override var maxEndV: Int? = null
         set(value) {
             flush()
             field = value
@@ -75,12 +75,18 @@ class ProgressBarImpl(
 
     private fun setHorizontal(progress: Double) {
         texture.handle.width = "($maxWidth)*$progress"
-        texture.handle.endU = "${maxEndU * progress}"
+
+        if (maxEndU != null) {
+            texture.handle.endU = "${maxEndU!! * progress}"
+        }
     }
 
     private fun setVertical(progress: Double) {
         texture.handle.height = "($maxHeight)*$progress"
-        texture.handle.endV = "${maxEndV * progress}"
+
+        if (maxEndU != null) {
+            texture.handle.endV = "${maxEndV!! * progress}"
+        }
     }
 
     private fun flush() {
