@@ -62,6 +62,10 @@ class ProgressBarImpl(
     private var startTime: Long = -1
 
     private fun setComponentProgress(progress: Double) {
+        require(progress in 0.0..1.0) {
+            "Progress must be between 0 and 1.0, actual: $progress"
+        }
+
         if (orientation == ProgressBar.Orientation.HORIZONTAL) {
             setHorizontal(progress)
         } else {
