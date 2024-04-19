@@ -20,8 +20,8 @@ interface ProgressBar {
     var orientation: Orientation
     var animationEaseFunction: AnimationEaseFunction
     var animationDurationFunction: AnimationDurationFunction
-    var maxWidth: String
-    var maxHeight: String
+    var maxWidth: String?
+    var maxHeight: String?
     var maxEndU: Int?
     var maxEndV: Int?
 

@@ -17,12 +17,12 @@ class ProgressBarImpl(
             flush()
             field = value
         }
-    override var maxWidth: String = texture.handle.width
+    override var maxWidth: String? = null
         set(value) {
             flush()
             field = value
         }
-    override var maxHeight: String = texture.handle.height
+    override var maxHeight: String? = null
         set(value) {
             flush()
             field = value
@@ -61,10 +61,6 @@ class ProgressBarImpl(
     private var lastDeltaProgress: Double = 0.0
     private var startTime: Long = -1
 
-    init {
-        setComponentProgress(0.0)
-    }
-
     private fun setComponentProgress(progress: Double) {
         if (orientation == ProgressBar.Orientation.HORIZONTAL) {
             setHorizontal(progress)
@@ -74,6 +70,10 @@ class ProgressBarImpl(
     }
 
     private fun setHorizontal(progress: Double) {
+        if (maxWidth == null) {
+            throw IllegalArgumentException("The maxWidth must be non-null")
+        }
+
         texture.handle.width = "($maxWidth)*$progress"
 
         if (maxEndU != null) {
@@ -82,9 +82,13 @@ class ProgressBarImpl(
     }
 
     private fun setVertical(progress: Double) {
+        if (maxHeight == null) {
+            throw IllegalArgumentException("The maxHeight must be non-null")
+        }
+
         texture.handle.height = "($maxHeight)*$progress"
 
-        if (maxEndU != null) {
+        if (maxEndV != null) {
             texture.handle.endV = "${maxEndV!! * progress}"
         }
     }
