@@ -9,14 +9,13 @@ import java.util.*
 
 class RootComponentImpl(
     gui: Gui
-) : RootComponent,
-    BaseJermComponentGroup<GermGuiPart<*>>(
-        gui,
-        null,
-        GermGuiCanvas("Jerm Fake Root Component ${UUID.randomUUID()}"),
-        gui.handle
-    ) {
+) : RootComponent, BaseJermComponentGroup<GermGuiPart<*>>(
+    gui = gui,
+    parent = null,
+    handle = GermGuiCanvas("Jerm Fake Root Component ${UUID.randomUUID()}"),
+    containerHandle = gui.handle
+) {
     override fun clone(): Component<GermGuiPart<*>> {
-        throw UnsupportedOperationException("Use Gui.clone()")
+        throw UnsupportedOperationException()
     }
 }

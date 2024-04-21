@@ -31,7 +31,6 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
         }
     }
 
-    private val componentMap = mutableMapOf<String, Component<*>>()
     override var components: List<Component<*>>
         get() = componentMap.values.toList()
         set(value) {
@@ -40,6 +39,7 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
                 addComponent(it)
             }
         }
+    private val componentMap = mutableMapOf<String, Component<*>>()
 
     init {
         containerHandle.guiParts.forEach {
@@ -65,13 +65,20 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
         return getComponentsRecursively0(this)
     }
 
-    override fun <T : GermGuiPart<T>> getComponentHandle(id: String, clazz: Class<T>): T? {
-        return containerHandle.getGuiPart(id, clazz)
+    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T = getComponentHandle2OrNull(id, type) ?: throw IllegalArgumentException("Unable to find Component handle by id: $id")
+
+    override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? {
+        return containerHandle.getGuiPart(id, type)
     }
 
-    override fun <T : Component<*>> getComponent(id: String, clazz: Class<T>): T? {
+    override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T = getComponent2OrNull(id, type) ?: throw IllegalArgumentException("Unable to find Component by id: $id")
+
+    override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? {
+        @Suppress("UNCHECKED_CAST")
         return componentMap[id] as T?
     }
+
+    override fun removeComponent(component: Component<*>) = removeComponent(component.id)
 
     override fun removeComponent(id: String) {
         containerHandle.removeGuiPart(id)
@@ -91,19 +98,19 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
         addComponent(HandleToComponentConverter.convert(gui, this, componentHandle))
     }
 
-    override fun <T : Component<*>> getComponentByPathOrThrow(path: String, type: Class<T>): T {
-        return getComponentByPath(path, type) ?: throw IllegalArgumentException("Unable to find Component by path: $path")
+    override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T {
+        return getComponentByPath2OrNull(path, type) ?: throw IllegalArgumentException("Unable to find Component by path: $path")
     }
 
-    override fun <T : Component<*>> getComponentByPath(path: String, type: Class<T>): T? {
+    override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? {
         val array = path.split(".")
 
         var parent: ComponentGroup = gui
 
         for (node in array.dropLast(1)) {
-            parent = parent.getComponent(node, Component::class.java) as ComponentGroup? ?: return null
+            parent = parent.getComponent2OrNull(node, Component::class.java) as ComponentGroup? ?: return null
         }
 
-        return parent.getComponentOrThrow(array.last(), type)
+        return parent.getComponent2(array.last(), type)
     }
 }

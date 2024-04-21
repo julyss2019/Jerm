@@ -3,8 +3,8 @@ package com.void01.bukkit.jerm.api.common
 import com.void01.bukkit.jerm.api.common.animation.AnimationManager
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.GuiParser
-import com.void01.bukkit.jerm.api.internal.Context
 import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
+import com.void01.bukkit.jerm.api.internal.Context
 
 object Jerm {
     private lateinit var context: Context

@@ -6,7 +6,7 @@ import com.void01.bukkit.jerm.core.gui.GuiImpl
 
 object GermGuiScreenToMessageConverter {
     fun convert(germGuiScreen: GermGuiScreen, containsGermGuiParts: Boolean = false): String {
-        val sourceFile = (Jerm.getGuiManager().getGui(germGuiScreen.guiName) as GuiImpl?)?.sourceFile
+        val sourceFile = (Jerm.getGuiManager().getGui2(germGuiScreen.guiName) as GuiImpl?)?.sourceFile
         var message = ""
 
         message += "id: ${germGuiScreen.guiName}\n"

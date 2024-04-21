@@ -21,6 +21,7 @@ class ButtonImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiButton
             field = value
         }
 
+    @Suppress("DEPRECATION")
     private fun registerGermHandlers() {
         // 考虑原生 GUI 会被实例化为 Jerm GUI
         if (germHandlersRegistered) {

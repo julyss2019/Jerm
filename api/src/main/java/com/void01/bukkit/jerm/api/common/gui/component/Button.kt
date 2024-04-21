@@ -18,6 +18,7 @@ interface Button : Component<GermGuiButton> {
 
     @Deprecated(message = "弃用", replaceWith = ReplaceWith("onButtonClickListener?.onClick(clickType, shift)"))
     fun performButtonClick(clickType: ClickType, shift: Boolean) {
+        @Suppress("DEPRECATION")
         onButtonClickListener?.onClick(clickType, shift)
     }
 

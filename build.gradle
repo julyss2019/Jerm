@@ -60,7 +60,7 @@ tasks.register('cleanBuildCore', GradleBuild) {
     tasks = [':core:clean', ':core:build']
 }
 
-tasks.register('cleanBuildPublishAPI', GradleBuild) {
+tasks.register('cleanPublishAPI', GradleBuild) {
     //noinspection GroovyAssignabilityCheck
-    tasks = [':api:clean', ':api:build', ':api:publish']
+    tasks = [':api:clean', ':api:publish']
 }

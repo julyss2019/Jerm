@@ -3,9 +3,6 @@ package com.void01.bukkit.jerm.api.common.player
 import org.bukkit.entity.Player
 
 interface JermPlayerManager {
-    @Deprecated("命名不规范", ReplaceWith("getPlayer(playerName)"))
-    fun getPlayer(playerName: String): JermPlayer = getPlayer(playerName)
-
     @Deprecated("命名不规范", ReplaceWith("getJermPlayer(bukkitPlayer)"))
     fun getPlayer(bukkitPlayer: Player): JermPlayer = getJermPlayer(bukkitPlayer)
 

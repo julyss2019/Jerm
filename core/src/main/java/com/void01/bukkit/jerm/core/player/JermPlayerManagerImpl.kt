@@ -16,7 +16,8 @@ class JermPlayerManagerImpl(private val plugin: JermPlugin) : JermPlayerManager 
     }
 
     override fun getJermPlayer(playerName: String): JermPlayer {
-        return getPlayer(Bukkit.getPlayer(playerName) ?: throw IllegalArgumentException("Player is offline"))
+        @Suppress("DEPRECATION")
+        return getJermPlayer(Bukkit.getPlayer(playerName) ?: throw IllegalArgumentException("Player is offline"))
     }
 
     override fun getJermPlayer(bukkitPlayer: Player): JermPlayer {

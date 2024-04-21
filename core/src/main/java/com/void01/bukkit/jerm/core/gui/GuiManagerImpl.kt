@@ -2,7 +2,6 @@ package com.void01.bukkit.jerm.core.gui
 
 import com.germ.germplugin.api.GermPacketAPI
 import com.germ.germplugin.api.HudMessageType
-import com.github.julyss2019.bukkit.voidframework.logging.logger.Logger
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.component.Texture
@@ -23,7 +22,7 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
     private val guiParser = plugin.guiParser
     private val guiMap = mutableMapOf<String, Gui>()
 
-    override fun reload() {
+    fun reload() {
         guiMap.clear()
         load()
     }
@@ -46,12 +45,20 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
 
         logger.info("载入了 " + guiMap.size + " 个 GUI: ")
         getGuis().forEach {
-                logger.info("- ${it.id}")
-            }
+            logger.info("- ${it.id}")
+        }
     }
 
     override fun existsGui(id: String): Boolean {
         return guiMap.containsKey(id)
+    }
+
+    override fun getGui2OrNull(id: String): Gui? {
+        return guiMap[id]?.clone()
+    }
+
+    override fun getGui2(id: String): Gui {
+        return getGui2OrNull(id) ?: throw IllegalArgumentException("Unable to find gui: $id")
     }
 
     override fun saveGuiFile(inputStream: InputStream, fileName: String, overwrite: Boolean) {
@@ -78,12 +85,14 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
         return guiMap.values.map { it.clone() }
     }
 
+    @Deprecated("命名优化", replaceWith = ReplaceWith("getGui2(id)"))
     override fun getGuiOrThrow(id: String): Gui {
-        return getGui(id) ?: throw IllegalArgumentException("GUI $id 不存在")
+        return getGui2(id)
     }
 
+    @Deprecated("命名优化", replaceWith = ReplaceWith("getGui2OrNull(id)"))
     override fun getGui(id: String): Gui? {
-        return guiMap[id]?.clone()
+        return getGui2OrNull(id)
     }
 
     override fun sendHudMessage(bukkitPlayer: Player, anchorName: String, message: String) {

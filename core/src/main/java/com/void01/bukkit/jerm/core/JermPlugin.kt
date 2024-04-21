@@ -90,7 +90,7 @@ class JermPlugin : VoidPlugin(), Context {
     fun reload() {
         saveDefaults()
         GermUtils.reload()
-        guiManager.reload()
+        (guiManager as GuiManagerImpl).reload()
         (animationManager as AnimationManagerImpl).reload()
     }
 }

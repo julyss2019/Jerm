@@ -2,7 +2,6 @@ package com.void01.bukkit.jerm.core.gui
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
-import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.RootComponent
@@ -13,8 +12,7 @@ import org.bukkit.entity.Player
 import java.io.File
 import java.util.*
 
-class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui,
-    ComponentGroup {
+class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui {
     override val id: String = handle.guiName
     override val instanceId: String = "jerm-gui-$id-instance-${UUID.randomUUID()}"
     override var onCloseListener: Gui.OnCloseListener? = null
@@ -22,16 +20,13 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
     override var onGuiClickListener: Gui.OnClickListener? = null
     override val rootComponent: RootComponent = RootComponentImpl(this)
 
-    /*    init {
-            handle.guiName = instanceId
-        }*/
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
      * @param cover 覆盖
      */
     override fun openAsGui(bukkitPlayer: Player, cover: Boolean) {
-        (plugin.jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+        (plugin.jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
 
         if (cover) {
             handle.openGui(bukkitPlayer)
@@ -41,7 +36,7 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
-        (plugin.jermPlayerManager.getPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+        (plugin.jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
         handle.openHud(bukkitPlayer)
     }
 
@@ -54,50 +49,33 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
     }
 
     // delegate
-    override val components: List<Component<*>>
-        get() {
-            return rootComponent.components
-        }
+    override val components: List<Component<*>> get() = rootComponent.components
 
-    override fun clearComponents() {
-        rootComponent.clearComponents()
-    }
+    override fun clearComponents() = rootComponent.clearComponents()
 
-    override fun getComponentsRecursively(): List<Component<*>> {
-        return rootComponent.getComponentsRecursively()
-    }
+    override fun getComponentsRecursively(): List<Component<*>> = rootComponent.getComponentsRecursively()
 
-    override fun <T : GermGuiPart<T>> getComponentHandle(id: String, clazz: Class<T>): T? {
-        return rootComponent.getComponentHandle(id, clazz)
-    }
+    override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? = rootComponent.getComponentHandle2OrNull(id, type)
 
-    override fun <T : Component<*>> getComponent(id: String, clazz: Class<T>): T? {
-        return rootComponent.getComponent(id, clazz)
-    }
+    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T = rootComponent.getComponentHandle2(id, type)
 
-    override fun removeComponent(id: String) {
-        rootComponent.removeComponent(id)
-    }
+    override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T = rootComponent.getComponent2(id, type)
 
-    override fun addComponent(component: Component<*>) {
-        rootComponent.addComponent(component)
-    }
+    override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? = rootComponent.getComponent2OrNull(id, type)
 
-    override fun addComponent(componentHandle: GermGuiPart<*>) {
-        rootComponent.addComponent(componentHandle)
-    }
+    override fun removeComponent(component: Component<*>) = rootComponent.removeComponent(component)
 
-    override fun existsComponent(id: String): Boolean {
-        return rootComponent.existsComponent(id)
-    }
+    override fun removeComponent(id: String) = rootComponent.removeComponent(id)
 
-    override fun <T : Component<*>> getComponentByPathOrThrow(path: String, type: Class<T>): T {
-        return rootComponent.getComponentByPathOrThrow(path, type)
-    }
+    override fun addComponent(component: Component<*>) = rootComponent.addComponent(component)
 
-    override fun <T : Component<*>> getComponentByPath(path: String, type: Class<T>): T? {
-        return rootComponent.getComponentByPath(path, type)
-    }
+    override fun addComponent(componentHandle: GermGuiPart<*>) = rootComponent.addComponent(componentHandle)
+
+    override fun existsComponent(id: String): Boolean = rootComponent.existsComponent(id)
+
+    override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T = rootComponent.getComponentByPath2(path, type)
+
+    override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? = rootComponent.getComponentByPath2OrNull(path, type)
     // delegate
 
     override fun clone(): Gui {
