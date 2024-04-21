@@ -13,13 +13,13 @@ interface ComponentGroup : Cloneable {
     /**
      * 获取萌芽控件，如果无法找到则抛出异常
      */
-    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponentHandle2(id, clazz)"))
+    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponentHandle2(id, type)"))
     fun <T : GermGuiPart<T>> getComponentHandleOrThrow(id: String, type: Class<T>): T = getComponentHandle2(id, type)
 
     /**
      * 获取萌芽控件
      */
-    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponentHandle2OrNull(id, clazz)"))
+    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponentHandle2OrNull(id, type)"))
     fun <T : GermGuiPart<T>> getComponentHandle(id: String, type: Class<T>): T? = getComponentHandle2OrNull(id, type)
 
     /**
@@ -35,13 +35,13 @@ interface ComponentGroup : Cloneable {
     /**
      * 获取控件，如果无法找到则抛出异常
      */
-    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponent2(id, clazz)"))
+    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponent2(id, type)"))
     fun <T : Component<*>> getComponentOrThrow(id: String, type: Class<T>): T = getComponent2(id, type)
 
     /**
      * 获取控件
      */
-    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponent2OrNull(id, clazz)"))
+    @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponent2OrNull(id, type)"))
     fun <T : Component<*>> getComponent(id: String, type: Class<T>): T? = getComponent2OrNull(id, type)
 
     /**
