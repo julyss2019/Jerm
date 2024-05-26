@@ -34,8 +34,9 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
             .filter { it.name.endsWith(".yml") }
             .flatMap {
                 try {
+                    logger.info("开始解析 GUI: ${it.absolutePath}")
                     guiParser.parseGuis(it)
-                } catch (ex: Exception) {
+                } catch (ex: Exception) { // 萌芽似乎直接打印了异常，导致捕捉失败
                     throw RuntimeException("在载入 ${it.absolutePath} 时出现了异常", ex)
                 }
             }
