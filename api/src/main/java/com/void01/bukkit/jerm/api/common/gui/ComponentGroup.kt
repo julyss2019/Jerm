@@ -89,4 +89,9 @@ interface ComponentGroup : Cloneable {
      */
     @Deprecated(message = "命名优化", replaceWith = ReplaceWith("getComponentByPath2OrNull(path, type)"))
     fun <T : Component<*>> getComponentByPath(path: String, type: Class<T>): T? = getComponentByPath2OrNull(path, type)
+
+    /**
+     * 递归获取层级字符串
+     */
+    fun getHierarchyString(): String
 }

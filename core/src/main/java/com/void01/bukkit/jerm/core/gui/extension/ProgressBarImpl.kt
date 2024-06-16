@@ -61,7 +61,7 @@ class ProgressBarImpl(
     private var lastDeltaProgress: Double = 0.0
     private var startTime: Long = -1
 
-    private fun setComponentProgress(progress: Double) {
+    private fun setTextureProgress(progress: Double) {
         require(progress in 0.0..1.0) {
             "Progress must be between 0 and 1.0, actual: $progress"
         }
@@ -101,13 +101,13 @@ class ProgressBarImpl(
         if (bukkitTask != null) {
             bukkitTask!!.cancel()
             currentProgress += lastDeltaProgress
-            setComponentProgress(currentProgress)
+            setTextureProgress(currentProgress)
         }
     }
 
     override fun setProgress(progress: Double) {
         flush()
-        setComponentProgress(progress)
+        setTextureProgress(progress)
     }
 
     private fun getDeltaProgress(progress: Double): Double {
@@ -132,7 +132,7 @@ class ProgressBarImpl(
                     val originalProgress = (elapsedSeconds / durationSeconds).coerceAtMost(1.0)
                     val easeProgress = animationEaseFunction.calculate(originalProgress)
 
-                    setComponentProgress(currentProgress + easeProgress * lastDeltaProgress)
+                    setTextureProgress(currentProgress + easeProgress * lastDeltaProgress)
 
                     if (elapsedSeconds > durationSeconds) {
                         currentProgress += lastDeltaProgress

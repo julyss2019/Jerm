@@ -21,6 +21,16 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
     private val jermPlayerManager: JermPlayerManager = plugin.jermPlayerManager
     private val guiManager: GuiManager = plugin.guiManager
 
+    @CommandBody(value = "queryHierarchy", description = "查看 GUI 层级关系")
+    fun query(sender: CommandSender, @CommandParam(description = "GUI") gui: Gui) {
+        MessageUtils.sendMessage(sender, gui.getHierarchyString())
+    }
+
+    @CommandBody(value = "test", description = "test")
+    fun test(sender: CommandSender, @CommandParam(description = "GUI") gui: Gui) {
+        MessageUtils.sendMessage(sender, gui.components.map { it.id }.joinToString(", "))
+    }
+
     @CommandBody(value = "listGUIs", description = "列出所有 GUI")
     fun list(
         sender: CommandSender,
@@ -46,7 +56,11 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
                 if (sender is ConsoleCommandSender) {
                     MessageUtils.sendMessage(sender, processedMessage)
                 } else {
-                    MessageUtils.sendCommandRawMessage(sender as Player, "$processedMessage &c[点击打开]", "/jerm gui openGUI ${it.id}")
+                    MessageUtils.sendCommandRawMessage(
+                        sender as Player,
+                        "$processedMessage &c[点击打开]",
+                        "/jerm gui openGUI ${it.id}"
+                    )
                 }
             }
     }
@@ -61,7 +75,7 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
         }
     }
 
-    @CommandBody(value = "openHUD", description = "为玩家打开 HUD")
+    @CommandBody(value = "openAsHUD", description = "为玩家打开 HUD")
     fun openHud(
         sender: CommandSender,
         @CommandParam(description = "GUI") gui: Gui,
@@ -76,7 +90,7 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
         }
     }
 
-    @CommandBody(value = "openGUI", description = "为玩家打开 GUI")
+    @CommandBody(value = "openAsGUI", description = "为玩家打开 GUI")
     fun open(
         sender: CommandSender,
         @CommandParam(description = "GUI") gui: Gui,

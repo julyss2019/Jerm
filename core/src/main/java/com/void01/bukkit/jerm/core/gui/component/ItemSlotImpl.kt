@@ -6,6 +6,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
 // isInvalid = true, isInteract = true，无悬浮，无法拿走，GermGuiSlotClickEvent 不触发
 // isInvalid = true, isInteract = false，无悬浮，无法拿走，GermGuiSlotClickEvent 不触发
@@ -39,6 +40,10 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         set(value) {
             handle.identity = value ?: handle.indexName
         }
+
+    init {
+        binding = "jerm-patch-${UUID.randomUUID()}" // 修复一个 canvas 内多个 slot 使用同一个 binding 导致所有物品都一样的 bug
+    }
 
     override fun clone(): ItemSlot {
         return ItemSlotImpl(gui, parent, GermUtils.cloneGuiPart(handle).apply {

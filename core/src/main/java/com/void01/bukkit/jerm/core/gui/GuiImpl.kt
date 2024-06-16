@@ -19,7 +19,11 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
     override var onOpenListener: Gui.OnOpenListener? = null
     override var onGuiClickListener: Gui.OnClickListener? = null
     override val rootComponent: RootComponent = RootComponentImpl(this)
-
+    override var isEnabled: Boolean
+        get() = !handle.isInvalid
+        set(value) {
+            handle.isInvalid = !value
+        }
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
@@ -44,10 +48,6 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         handle.close()
     }
 
-    override fun toString(): String {
-        return "Gui(id='$id')"
-    }
-
     // delegate
     override val components: List<Component<*>> get() = rootComponent.components
 
@@ -55,13 +55,16 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
 
     override fun getComponentsRecursively(): List<Component<*>> = rootComponent.getComponentsRecursively()
 
-    override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? = rootComponent.getComponentHandle2OrNull(id, type)
+    override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? =
+        rootComponent.getComponentHandle2OrNull(id, type)
 
-    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T = rootComponent.getComponentHandle2(id, type)
+    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T =
+        rootComponent.getComponentHandle2(id, type)
 
     override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T = rootComponent.getComponent2(id, type)
 
-    override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? = rootComponent.getComponent2OrNull(id, type)
+    override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? =
+        rootComponent.getComponent2OrNull(id, type)
 
     override fun removeComponent(component: Component<*>) = rootComponent.removeComponent(component)
 
@@ -73,9 +76,15 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
 
     override fun existsComponent(id: String): Boolean = rootComponent.existsComponent(id)
 
-    override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T = rootComponent.getComponentByPath2(path, type)
+    override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T =
+        rootComponent.getComponentByPath2(path, type)
 
-    override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? = rootComponent.getComponentByPath2OrNull(path, type)
+    override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? =
+        rootComponent.getComponentByPath2OrNull(path, type)
+
+    override fun getHierarchyString(): String {
+        return rootComponent.getHierarchyString()
+    }
     // delegate
 
     override fun clone(): Gui {

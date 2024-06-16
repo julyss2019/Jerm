@@ -13,7 +13,7 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     gui: Gui,
     override val parent: JermComponentGroup<*>?,
     override val handle: T,
-    private val containerHandle: IGuiPartContainer
+    private val containerHandle: IGuiPartContainer // 由于 IGuiPartContainer 跟 GermGuiPart 没有任何继承关系，故需要额外引用
 ) : BaseComponent<T>(gui, parent, handle), JermComponentGroup<T> {
     companion object {
         private fun getComponentsRecursively0(jermComponentGroup: JermComponentGroup<*>): List<Component<*>> {
@@ -29,6 +29,23 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
 
             return list
         }
+
+        /**
+         * 用于递归获取层级字符串
+         */
+        private fun getHierarchyString0(component: Component<*>, level: Int): String {
+            var result = ""
+
+            result += "  ".repeat(level) + component.id + "\n"
+
+            if (component is ComponentGroup) {
+                component.components.forEach {
+                    result += getHierarchyString0(it, level + 1)
+                }
+            }
+
+            return result
+        }
     }
 
     override var components: List<Component<*>>
@@ -42,8 +59,9 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     private val componentMap = mutableMapOf<String, Component<*>>()
 
     init {
+        // 载入组件
         containerHandle.guiParts.forEach {
-            addComponent0(HandleToComponentConverter.convert(gui, parent, it))
+            addComponent0(HandleToComponentConverter.convert(gui, this, it))
         }
     }
 
@@ -60,18 +78,21 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
         componentMap.clear()
     }
 
-
     override fun getComponentsRecursively(): List<Component<*>> {
         return getComponentsRecursively0(this)
     }
 
-    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T = getComponentHandle2OrNull(id, type) ?: throw IllegalArgumentException("Unable to find Component handle by id: $id")
+    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T =
+        getComponentHandle2OrNull(id, type)
+            ?: throw IllegalArgumentException("Unable to find Component handle by id: $id")
 
     override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? {
         return containerHandle.getGuiPart(id, type)
     }
 
-    override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T = getComponent2OrNull(id, type) ?: throw IllegalArgumentException("Unable to find Component by id: $id")
+    override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T =
+        getComponent2OrNull(id, type)
+            ?: throw IllegalArgumentException("Unable to find Component by path: ${getFullPath(id)}")
 
     override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
@@ -99,18 +120,41 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     }
 
     override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T {
-        return getComponentByPath2OrNull(path, type) ?: throw IllegalArgumentException("Unable to find Component by path: $path")
+        return getComponentByPath2OrNull(path, type)
+            ?: throw IllegalArgumentException("Unable to find Component by path: ${getFullPath(path)}")
     }
 
     override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? {
         val array = path.split(".")
 
-        var parent: ComponentGroup = gui
+        // 获取最近的 ComponentGroup
+        var tmp: ComponentGroup = this
 
         for (node in array.dropLast(1)) {
-            parent = parent.getComponent2OrNull(node, Component::class.java) as ComponentGroup? ?: return null
+            tmp = tmp.getComponent2OrNull(node, Component::class.java) as ComponentGroup? ?: return null
         }
 
-        return parent.getComponent2(array.last(), type)
+        // 使用最近的 ComponentGroup 再获取组件
+        return tmp.getComponent2OrNull(array.last(), type)
+    }
+
+    override fun getHierarchyString(): String {
+        return getHierarchyString0(this, 0)
+    }
+
+    /**
+     * 获取完整路径
+     * 从顶层到本层 + path
+     */
+    private fun getFullPath(path: String): String {
+        var tmp: JermComponentGroup<*>? = this
+        val paths = mutableListOf<String>()
+
+        while (tmp != null) {
+            paths.add(0, tmp.id)
+            tmp = tmp.parent
+        }
+
+        return "${paths.joinToString(".")}.${path}"
     }
 }

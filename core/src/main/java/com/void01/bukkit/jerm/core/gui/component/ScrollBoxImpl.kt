@@ -12,6 +12,7 @@ import com.void01.bukkit.jerm.core.util.GermUtils
 
 class ScrollBoxImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScroll) :
     BaseJermComponentGroup<GermGuiScroll>(gui, parent, handle, handle), ScrollBox {
+
     class ScrollBarImpl(private val button: Button, override val scrollBox: ScrollBox) : ScrollBox.ScrollBar,
         Component<GermGuiButton> by button {
 

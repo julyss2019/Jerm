@@ -44,6 +44,8 @@ class JermPlugin : VoidPlugin(), Context {
         private set
     override lateinit var guiManager: GuiManager
         private set
+    var isLoading: Boolean = true
+        private set
 
     override fun onPluginEnable() {
         instance = this
@@ -76,6 +78,7 @@ class JermPlugin : VoidPlugin(), Context {
             override fun run() {
                 (guiManager as GuiManagerImpl).load()
                 (animationManager as AnimationManagerImpl).load()
+                isLoading = false
             }
         }.runTaskLater(this, 40L)
 

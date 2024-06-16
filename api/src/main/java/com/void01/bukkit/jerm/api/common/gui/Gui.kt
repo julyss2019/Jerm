@@ -14,6 +14,7 @@ interface Gui : Cloneable, ComponentGroup {
     var onOpenListener: OnOpenListener?
     var onGuiClickListener: OnClickListener?
     val rootComponent: RootComponent
+    var isEnabled: Boolean
 
     interface OnCloseListener {
         /**
