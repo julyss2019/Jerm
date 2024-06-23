@@ -98,7 +98,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
             val itemSlot = findComponent(usingGui, event.germGuiSlot) as ItemSlot
 
-            if (!itemSlot.isViewOnly) {
+            if (itemSlot.isViewOnly) {
                 event.isCancelled = true
             }
 

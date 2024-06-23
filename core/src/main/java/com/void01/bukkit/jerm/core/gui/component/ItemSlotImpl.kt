@@ -4,7 +4,6 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
-import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
@@ -46,7 +45,11 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
     }
 
     override fun clone(): ItemSlot {
-        return ItemSlotImpl(gui, parent, GermUtils.cloneGuiPart(handle).apply {
+        val clone = GermGuiSlot(UUID.randomUUID().toString())
+
+        handle.copyTo(clone)
+
+        return ItemSlotImpl(gui, parent, clone.apply {
             identity = binding
         })
     }

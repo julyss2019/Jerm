@@ -10,40 +10,20 @@ import kotlin.math.pow
 class ProgressBarImpl(
     private val plugin: JavaPlugin,
     override val texture: Texture,
-    orientation: ProgressBar.Orientation
+    override var orientation: ProgressBar.Orientation
 ) : ProgressBar {
-    override var orientation: ProgressBar.Orientation = orientation
-        set(value) {
-            flush()
-            field = value
-        }
     override var maxWidth: String? = null
-        set(value) {
-            flush()
-            field = value
-        }
     override var maxHeight: String? = null
-        set(value) {
-            flush()
-            field = value
-        }
     override var maxEndU: Int? = null
-        set(value) {
-            flush()
-            field = value
-        }
     override var maxEndV: Int? = null
-        set(value) {
-            flush()
-            field = value
+    override var animationDurationFunction: ProgressBar.AnimationDurationFunction =
+        object : ProgressBar.AnimationDurationFunction {
+            override fun calculate(deltaProgress: Double): Double {
+                return .6
+            }
         }
-    override var animationDurationFunction: ProgressBar.AnimationDurationFunction = object : ProgressBar.AnimationDurationFunction {
-        override fun calculate(deltaProgress: Double): Double {
-            return 2.4 - 1.4 * deltaProgress
-        }
-    }
         set(value) {
-            flush()
+            stopTask()
             field = value
         }
     override var animationEaseFunction: ProgressBar.AnimationEaseFunction = object : ProgressBar.AnimationEaseFunction {
@@ -52,13 +32,20 @@ class ProgressBarImpl(
         }
     }
         set(value) {
-            flush()
+            stopTask()
             field = value
         }
 
-    private var bukkitTask: BukkitTask? = null
+    // 缓动任务
+    private var smoothTask: BukkitTask? = null
+
+    // 当前进度
     private var currentProgress: Double = 0.0
+
+    // 差异进度
     private var lastDeltaProgress: Double = 0.0
+
+    // 差异开始时间
     private var startTime: Long = -1
 
     private fun setTextureProgress(progress: Double) {
@@ -97,35 +84,37 @@ class ProgressBarImpl(
         }
     }
 
-    private fun flush() {
-        if (bukkitTask != null) {
-            bukkitTask!!.cancel()
+    private fun stopTask() {
+        if (smoothTask != null) {
+            smoothTask!!.cancel()
             currentProgress += lastDeltaProgress
-            setTextureProgress(currentProgress)
+            smoothTask = null
         }
     }
 
-    override fun setProgress(progress: Double) {
-        flush()
-        setTextureProgress(progress)
+    private fun flushCurrentProgress() {
+        setTextureProgress(currentProgress)
     }
 
     private fun getDeltaProgress(progress: Double): Double {
         return progress - currentProgress
     }
 
+    override fun setProgress(progress: Double) {
+        stopTask()
+        setTextureProgress(progress)
+    }
+
     override fun setProgressSmoothly(progress: Double) {
-        if (lastDeltaProgress != getDeltaProgress(progress)) {
-            flush()
-        } else {
-            return
-        }
+        stopTask()
+        flushCurrentProgress()
 
-        startTime = System.currentTimeMillis()
-        lastDeltaProgress = getDeltaProgress(progress)
+        val delta = getDeltaProgress(progress)
 
-        if (lastDeltaProgress != 0.0) {
-            bukkitTask = object : BukkitRunnable() {
+        if (delta != 0.0) {
+            startTime = System.currentTimeMillis()
+            lastDeltaProgress = delta
+            smoothTask = object : BukkitRunnable() {
                 override fun run() {
                     val durationSeconds = animationDurationFunction.calculate(lastDeltaProgress)
                     val elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000.0
@@ -136,7 +125,7 @@ class ProgressBarImpl(
 
                     if (elapsedSeconds > durationSeconds) {
                         currentProgress += lastDeltaProgress
-                        bukkitTask = null
+                        smoothTask = null
                         cancel()
                     }
                 }
