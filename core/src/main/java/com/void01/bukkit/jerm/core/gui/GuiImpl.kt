@@ -10,11 +10,9 @@ import com.void01.bukkit.jerm.core.gui.component.RootComponentImpl
 import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import org.bukkit.entity.Player
 import java.io.File
-import java.util.*
 
 class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui {
     override val id: String = handle.guiName
-    override val instanceId: String = "jerm-gui-$id-instance-${UUID.randomUUID()}"
     override var onCloseListener: Gui.OnCloseListener? = null
     override var onOpenListener: Gui.OnOpenListener? = null
     override var onGuiClickListener: Gui.OnClickListener? = null

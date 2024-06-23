@@ -13,7 +13,9 @@ class PlayerListener(private val plugin: JermPlugin) : Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        jermPlayerManager.unloadPlayer(event.player)
+        val bukkitPlayer = event.player
+
+        jermPlayerManager.unloadJermPlayer(bukkitPlayer)
     }
 
     @EventHandler

@@ -8,7 +8,6 @@ import org.bukkit.entity.Player
 
 interface Gui : Cloneable, ComponentGroup {
     val id: String
-    val instanceId: String
     val handle: GermGuiScreen
     var onCloseListener: OnCloseListener?
     var onOpenListener: OnOpenListener?

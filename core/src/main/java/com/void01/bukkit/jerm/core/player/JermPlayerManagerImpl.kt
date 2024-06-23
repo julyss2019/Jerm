@@ -9,10 +9,14 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class JermPlayerManagerImpl(private val plugin: JermPlugin) : JermPlayerManager {
-    private val jermPlayerImplMap: MutableMap<UUID, JermPlayerImpl> = ConcurrentHashMap()
+    private val jermPlayerMap: MutableMap<UUID, JermPlayerImpl> = ConcurrentHashMap()
 
-    fun unloadPlayer(bukkitPlayer: Player) {
-        jermPlayerImplMap.remove(bukkitPlayer.uniqueId)
+    fun unloadJermPlayer(bukkitPlayer: Player) {
+        jermPlayerMap.remove(bukkitPlayer.uniqueId)
+    }
+
+    fun isJermPlayerLoaded(bukkitPlayer: Player): Boolean {
+        return jermPlayerMap.containsKey(bukkitPlayer.uniqueId)
     }
 
     override fun getJermPlayer(playerName: String): JermPlayer {
@@ -25,10 +29,10 @@ class JermPlayerManagerImpl(private val plugin: JermPlugin) : JermPlayerManager 
 
         val uuid = bukkitPlayer.uniqueId
 
-        if (!jermPlayerImplMap.containsKey(uuid)) {
-            jermPlayerImplMap[uuid] = JermPlayerImpl(bukkitPlayer, plugin)
+        if (!jermPlayerMap.containsKey(uuid)) {
+            jermPlayerMap[uuid] = JermPlayerImpl(bukkitPlayer, plugin)
         }
 
-        return jermPlayerImplMap[uuid]!!
+        return jermPlayerMap[uuid]!!
     }
 }
