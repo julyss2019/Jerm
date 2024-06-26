@@ -92,7 +92,7 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
 
     override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T =
         getComponent2OrNull(id, type)
-            ?: throw IllegalArgumentException("Unable to find Component by path: ${getFullPath(id)}")
+            ?: throw IllegalArgumentException("Unable to find Component by path: ${this.path}.${path}}")
 
     override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
@@ -121,7 +121,7 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
 
     override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T {
         return getComponentByPath2OrNull(path, type)
-            ?: throw IllegalArgumentException("Unable to find Component by path: ${getFullPath(path)}")
+            ?: throw IllegalArgumentException("Unable to find Component by path: ${this.path}.${path}")
     }
 
     override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? {
@@ -140,21 +140,5 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
 
     override fun getHierarchyString(): String {
         return getHierarchyString0(this, 0)
-    }
-
-    /**
-     * 获取完整路径
-     * 从顶层到本层 + path
-     */
-    private fun getFullPath(path: String): String {
-        var tmp: JermComponentGroup<*>? = this
-        val paths = mutableListOf<String>()
-
-        while (tmp != null) {
-            paths.add(0, tmp.id)
-            tmp = tmp.parent
-        }
-
-        return "${paths.joinToString(".")}.${path}"
     }
 }

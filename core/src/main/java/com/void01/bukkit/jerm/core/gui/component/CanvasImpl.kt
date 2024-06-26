@@ -6,10 +6,10 @@ import com.void01.bukkit.jerm.api.common.gui.component.Canvas
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class CanvasJerm(override val gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiCanvas) :
+class CanvasImpl(override val gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiCanvas) :
     BaseJermComponentGroup<GermGuiCanvas>(gui = gui, parent = parent, handle = handle, containerHandle = handle), Canvas {
 
     override fun clone(): Canvas {
-        return CanvasJerm(gui, parent, GermUtils.cloneGuiPart(handle))
+        return CanvasImpl(gui, parent, GermUtils.cloneGuiPart(handle))
     }
 }

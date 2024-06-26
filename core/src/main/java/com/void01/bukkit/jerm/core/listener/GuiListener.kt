@@ -2,6 +2,7 @@ package com.void01.bukkit.jerm.core.listener
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiButton
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
+import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import com.germ.germplugin.api.event.gui.*
 import com.void01.bukkit.jerm.api.common.event.GuiCloseEvent
@@ -50,6 +51,14 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
                 }
             }
 
+            if (enum is GermGuiScreen.ClickType) {
+                return when (enum) {
+                    GermGuiScreen.ClickType.LEFT_CLICK, GermGuiScreen.ClickType.LEFT_CLICK_RELEASE -> Component.ClickType.LEFT
+                    GermGuiScreen.ClickType.RIGHT_CLICK, GermGuiScreen.ClickType.RIGHT_CLICK_RELEASE -> Component.ClickType.RIGHT
+                    else -> null
+                }
+            }
+
             return null
         }
 
@@ -70,13 +79,19 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
                 val pop = componentNodes.pop()
                 val tmp = (currentComponent as ComponentGroup).getComponent2OrNull(pop.indexName, Component::class.java)
 
-                currentComponent = tmp ?: currentComponent.getPseudoComponentOrThrow(pop.indexName, Component::class.java) // 伪部件（滚动条）
+                currentComponent =
+                    tmp ?: currentComponent.getPseudoComponentOrThrow(pop.indexName, Component::class.java) // 伪部件（滚动条）
             }
 
             return currentComponent!!
         }
 
-        private fun fireClickListener(component: Component<*>, clickType: Component.ClickType, isShift: Boolean, event: Event) {
+        private fun fireClickListener(
+            component: Component<*>,
+            clickType: Component.ClickType,
+            isShift: Boolean,
+            event: Event
+        ) {
             component.onClickListener?.run {
                 onClick(clickType)
                 onClick(clickType, isShift)
@@ -113,6 +128,13 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     // LEFT, MIDDLE, RIGHT, SHIFT
     @EventHandler
     fun onButtonClick(event: GermGuiButtonEvent) {
+        val id = event.germGuiButton.indexName
+
+        // 多层嵌套滚动条可能会出现问题，直接过滤
+        if (id == "sliderH" || id == "sliderV") {
+            return
+        }
+
         val germEventType = event.eventType
         val jermPlayer = jermPlayerManager.getJermPlayer(event.player) as JermPlayerImpl
         val clickType = parseClickType(event.eventType) ?: return
@@ -131,20 +153,27 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl
         val guiHandle = event.clickedGuiScreen
         val usingGui = jermPlayer.getUsingGuiOrNull(guiHandle) as GuiImpl? ?: return
-        val clickedComponentHandle = event.clickedPart
-        val isClickDown = germEventType.name.endsWith("RELEASE")
+        val isClickDown = !germEventType.name.endsWith("RELEASE")
         val clickType = parseClickType(germEventType) ?: return
-        val component = if (clickedComponentHandle == null) null else findComponent(usingGui, clickedComponentHandle)
+        var tmp = event.clickedPart
 
-        if (isClickDown) {
-            usingGui.onGuiClickListener?.onClickDown(component, clickType, event)
-        } else {
-            usingGui.onGuiClickListener?.onClickUp(component, clickType, event)
-        }
+        // Bug: 萌芽松开在某些情况下可能会穿透
+        // 传递给所有父组件
+        while (tmp != null) {
+            val component = findComponent(usingGui, tmp)
 
-        // Button ItemSlot 已特殊处理
-        if (component != null && component !is Button && component !is ItemSlot) {
-            fireClickListener(component, clickType, false, event)
+            if (isClickDown) {
+                usingGui.onGuiClickListener?.onClickDown(component, clickType, event)
+
+                // Button ItemSlot 已特殊处理
+                if (component !is Button && component !is ItemSlot) {
+                    fireClickListener(component, clickType, false, event)
+                }
+            } else {
+                usingGui.onGuiClickListener?.onClickUp(component, clickType, event)
+            }
+
+            tmp = tmp.parentPart
         }
     }
 

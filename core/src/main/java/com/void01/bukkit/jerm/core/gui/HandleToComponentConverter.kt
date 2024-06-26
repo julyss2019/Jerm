@@ -13,7 +13,7 @@ object HandleToComponentConverter {
             GermGuiLabel::class.java -> LabelImpl(gui, parent, handle as GermGuiLabel)
             GermGuiSlot::class.java -> ItemSlotImpl(gui, parent, handle as GermGuiSlot)
             GermGuiScroll::class.java -> ScrollBoxImpl(gui, parent, handle as GermGuiScroll)
-            GermGuiCanvas::class.java -> CanvasJerm(gui, parent, handle as GermGuiCanvas)
+            GermGuiCanvas::class.java -> CanvasImpl(gui, parent, handle as GermGuiCanvas)
             GermGuiTexture::class.java -> TextureImpl(gui, parent, handle as GermGuiTexture)
             else -> {
                 UnsupportedComponent(gui, parent, handle)
