@@ -4,7 +4,6 @@ plugins {
 
 allprojects {
     version '1.3.2-alpha'
-    version += '-' + 'git rev-parse --short HEAD'.execute().text.trim()
     group 'com.void01.bukkit'
 
     repositories {

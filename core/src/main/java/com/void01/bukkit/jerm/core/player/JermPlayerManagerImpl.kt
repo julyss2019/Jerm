@@ -25,12 +25,12 @@ class JermPlayerManagerImpl(private val plugin: JermPlugin) : JermPlayerManager 
     }
 
     override fun getJermPlayer(bukkitPlayer: Player): JermPlayer {
-        require(bukkitPlayer.isValid) { "Player is invalid" }
+        require(bukkitPlayer.isOnline) { "Player is offline" }
 
         val uuid = bukkitPlayer.uniqueId
 
         if (!jermPlayerMap.containsKey(uuid)) {
-            jermPlayerMap[uuid] = JermPlayerImpl(bukkitPlayer, plugin)
+            jermPlayerMap[uuid] = JermPlayerImpl(Bukkit.getPlayer(uuid)!!, plugin)
         }
 
         return jermPlayerMap[uuid]!!

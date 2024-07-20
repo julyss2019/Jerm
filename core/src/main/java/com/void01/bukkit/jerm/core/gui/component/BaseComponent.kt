@@ -30,15 +30,21 @@ abstract class BaseComponent<T : GermGuiPart<*>>(
     override var onClickListener: Component.OnClickListener? = null
     override val path: String
         get() {
-            var tmp: JermComponentGroup<*>? = parent
+            var tmpComponentGroup: JermComponentGroup<*>? = parent
             val paths = mutableListOf<String>()
 
-            while (tmp != null) {
-                paths.add(0, tmp.id)
-                tmp = tmp.parent
+            while (tmpComponentGroup != null) {
+                paths.add(0, tmpComponentGroup.id)
+                tmpComponentGroup = tmpComponentGroup.parent
             }
 
-            return "${paths.joinToString(".")}.${id}"
+            val tmpPath = paths.joinToString(".")
+
+            if (tmpPath.isEmpty()) {
+                return id
+            } else {
+                return "${tmpPath}.$id"
+            }
         }
 
     override fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>? {

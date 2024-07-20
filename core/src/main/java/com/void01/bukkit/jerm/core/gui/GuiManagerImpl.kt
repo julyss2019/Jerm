@@ -59,7 +59,7 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
     }
 
     override fun getGui2(id: String): Gui {
-        return getGui2OrNull(id) ?: throw IllegalArgumentException("Unable to find gui: $id")
+        return getGui2OrNull(id) ?: throw IllegalArgumentException("GUI with ID '$id' not found")
     }
 
     override fun saveGuiFile(inputStream: InputStream, fileName: String, overwrite: Boolean) {

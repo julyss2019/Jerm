@@ -23,5 +23,5 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from "src/main/resources/plugin.yml"
-    filter(ReplaceTokens, beginToken: '${', endToken: '}', tokens: ["version": project.version])
+    filter(ReplaceTokens, beginToken: '${', endToken: '}', tokens: ["version": project.version, "gitHash": 'git rev-parse --short HEAD'.execute().text.trim()])
 }

@@ -2,6 +2,7 @@ package com.void01.bukkit.jerm.core.gui.component
 
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import com.germ.germplugin.api.dynamic.gui.IGuiPartContainer
+import com.void01.bukkit.jerm.api.common.exception.ComponentNotFoundException
 import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
@@ -82,23 +83,6 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
         return getComponentsRecursively0(this)
     }
 
-    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T =
-        getComponentHandle2OrNull(id, type)
-            ?: throw IllegalArgumentException("Unable to find Component handle by id: $id")
-
-    override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? {
-        return containerHandle.getGuiPart(id, type)
-    }
-
-    override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T =
-        getComponent2OrNull(id, type)
-            ?: throw IllegalArgumentException("Unable to find Component by path: ${this.path}.${path}}")
-
-    override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? {
-        @Suppress("UNCHECKED_CAST")
-        return componentMap[id] as T?
-    }
-
     override fun removeComponent(component: Component<*>) = removeComponent(component.id)
 
     override fun removeComponent(id: String) {
@@ -120,8 +104,7 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     }
 
     override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T {
-        return getComponentByPath2OrNull(path, type)
-            ?: throw IllegalArgumentException("Unable to find Component by path: ${this.path}.${path}")
+        return getComponentByPath2OrNull(path, type) ?: throw ComponentNotFoundException(gui, this, path)
     }
 
     override fun <T : Component<*>> getComponentByPath2OrNull(path: String, type: Class<T>): T? {
@@ -140,5 +123,24 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
 
     override fun getHierarchyString(): String {
         return getHierarchyString0(this, 0)
+    }
+
+    override fun <T : Component<*>> getComponent2(id: String, type: Class<T>): T =
+        getComponent2OrNull(id, type) ?: throw ComponentNotFoundException(gui, this, id)
+
+    @Suppress("DEPRECATION")
+    @Deprecated("使用 getComponent", replaceWith = ReplaceWith(""))
+    override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T =
+        getComponentHandle2OrNull(id, type)
+            ?: throw IllegalArgumentException("Component handle with id '$id' not found in GUI '${gui.id}'")
+
+    @Deprecated("使用 getComponent")
+    override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? {
+        return containerHandle.getGuiPart(id, type)
+    }
+
+    override fun <T : Component<*>> getComponent2OrNull(id: String, type: Class<T>): T? {
+        @Suppress("UNCHECKED_CAST")
+        return componentMap[id] as T?
     }
 }

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player
 import java.io.File
 
 class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui {
+    var isOpened = false
     override val id: String = handle.guiName
     override var onCloseListener: Gui.OnCloseListener? = null
     override var onOpenListener: Gui.OnOpenListener? = null
@@ -35,15 +36,20 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         } else {
             handle.openChildGui(bukkitPlayer)
         }
+
+        isOpened = true
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
         (plugin.jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
         handle.openHud(bukkitPlayer)
+
+        isOpened = true
     }
 
     override fun close() {
         handle.close()
+        isOpened = false
     }
 
     // delegate
@@ -53,9 +59,13 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
 
     override fun getComponentsRecursively(): List<Component<*>> = rootComponent.getComponentsRecursively()
 
+    @Suppress("DEPRECATION")
+    @Deprecated("使用 getComponent", ReplaceWith(""))
     override fun <T : GermGuiPart<T>> getComponentHandle2OrNull(id: String, type: Class<T>): T? =
         rootComponent.getComponentHandle2OrNull(id, type)
 
+    @Suppress("DEPRECATION")
+    @Deprecated("使用 getComponent", ReplaceWith(""))
     override fun <T : GermGuiPart<T>> getComponentHandle2(id: String, type: Class<T>): T =
         rootComponent.getComponentHandle2(id, type)
 

@@ -1,7 +1,7 @@
 name: Jerm
 main: com.void01.bukkit.jerm.core.JermPlugin
 author: July_ss
-version: ${version}
+version: ${version}-${gitHash}
 depend:
   - VoidFramework-Bukkit
   - GermPlugin

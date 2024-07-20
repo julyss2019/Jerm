@@ -60,7 +60,7 @@ class AnimationManagerImpl(val plugin: JermPlugin) : AnimationManager {
 
     override fun getAnimationLength(id: String): Double {
         if (!animationMap.containsKey(id)) {
-            throw IllegalArgumentException("Unable to find animation: $id")
+            throw IllegalArgumentException("Animation with ID '$id' not found")
         }
 
         return animationMap[id]!!.animationLength

@@ -13,7 +13,7 @@ class RootComponentImpl(
     BaseJermComponentGroup<GermGuiPart<*>>(
         gui = gui,
         parent = null,
-        handle = GermGuiCanvas("Jerm-Fake-Gui-${UUID.randomUUID()}"),
+        handle = GermGuiCanvas("jermRootComponent-${UUID.randomUUID()}"),
         containerHandle = gui.handle
     ) {
     override fun clone(): Component<GermGuiPart<*>> {
