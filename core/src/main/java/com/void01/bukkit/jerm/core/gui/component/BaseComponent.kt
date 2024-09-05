@@ -8,9 +8,9 @@ import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
 abstract class BaseComponent<T : GermGuiPart<*>>(
-    override val gui: Gui,
-    override val parent: JermComponentGroup<*>?,
-    override val handle: T
+    final override val gui: Gui,
+    final override val parent: JermComponentGroup<*>?,
+    final override val handle: T
 ) : Component<T> {
     override var id: String
         get() = handle.indexName
@@ -30,21 +30,20 @@ abstract class BaseComponent<T : GermGuiPart<*>>(
     override var onClickListener: Component.OnClickListener? = null
     override val path: String
         get() {
-            var tmpComponentGroup: JermComponentGroup<*>? = parent
-            val paths = mutableListOf<String>()
+            val list = mutableListOf<String>()
 
-            while (tmpComponentGroup != null) {
-                paths.add(0, tmpComponentGroup.id)
-                tmpComponentGroup = tmpComponentGroup.parent
+            list.add(0, id)
+
+            var parent = parent
+
+            while (parent != null) {
+                list.add(0, parent.id)
+                parent = parent.parent
             }
 
-            val tmpPath = paths.joinToString(".")
+            val path = list.joinToString(".")
 
-            if (tmpPath.isEmpty()) {
-                return id
-            } else {
-                return "${tmpPath}.$id"
-            }
+            return path
         }
 
     override fun <T : Component<*>> getPseudoComponent(id: String, clazz: Class<T>): Component<*>? {

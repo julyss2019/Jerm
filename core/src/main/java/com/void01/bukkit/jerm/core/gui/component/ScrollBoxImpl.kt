@@ -7,7 +7,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.component.ScrollBox
-import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
+import com.void01.bukkit.jerm.core.gui.GermHandleToComponentAdapter
 import com.void01.bukkit.jerm.core.util.GermUtils
 
 class ScrollBoxImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScroll) :
@@ -27,12 +27,12 @@ class ScrollBoxImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiScr
     init {
         if (handle.sliderV != null) {
             verticalScrollBar =
-                ScrollBarImpl(HandleToComponentConverter.convert(gui, parent, handle.sliderV) as Button, this)
+                ScrollBarImpl(GermHandleToComponentAdapter.adapt(gui, parent, handle.sliderV) as Button, this)
         }
 
         if (handle.sliderH != null) {
             horizontalScrollBar =
-                ScrollBarImpl(HandleToComponentConverter.convert(gui, parent, handle.sliderH) as Button, this)
+                ScrollBarImpl(GermHandleToComponentAdapter.adapt(gui, parent, handle.sliderH) as Button, this)
         }
     }
 

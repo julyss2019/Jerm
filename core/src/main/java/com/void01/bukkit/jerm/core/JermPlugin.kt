@@ -76,9 +76,12 @@ class JermPlugin : VoidPlugin(), Context {
         // 等待萌芽载入
         object : BukkitRunnable() {
             override fun run() {
-                (guiManager as GuiManagerImpl).load()
-                (animationManager as AnimationManagerImpl).load()
-                isLoading = false
+                try {
+                    (guiManager as GuiManagerImpl).load()
+                    (animationManager as AnimationManagerImpl).load()
+                } finally {
+                    isLoading = false
+                }
             }
         }.runTaskLater(this, 40L)
 
@@ -92,6 +95,7 @@ class JermPlugin : VoidPlugin(), Context {
 
     fun reload() {
         saveDefaults()
+        reloadLogger()
         GermUtils.reload()
         (guiManager as GuiManagerImpl).reload()
         (animationManager as AnimationManagerImpl).reload()

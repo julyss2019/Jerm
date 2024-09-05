@@ -1,1 +1,2 @@
-play-nearby-animation-distance: 64
+# 播放“附近”动画时附近观众距离表演者最大的判定距离
+animation-nearby-viewer-max-distance: 64

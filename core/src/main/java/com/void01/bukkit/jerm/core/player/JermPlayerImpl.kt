@@ -11,7 +11,11 @@ import org.bukkit.entity.Player
 class JermPlayerImpl(override val bukkitPlayer: Player, val plugin: JermPlugin) : JermPlayer {
     private val usingGuis = mutableListOf<Gui>()
 
-    fun getUsingGuiOrNull(handle: GermGuiScreen): Gui? {
+    override fun getUsingGui(handle: GermGuiScreen): Gui {
+        return getUsingGuiOrNull(handle) ?: throw IllegalArgumentException("Unable to find using GUI by hande")
+    }
+
+    override fun getUsingGuiOrNull(handle: GermGuiScreen): Gui? {
         return usingGuis.firstOrNull { it.handle == handle }
     }
 

@@ -6,14 +6,28 @@ import com.void01.bukkit.jerm.api.common.gui.component.Button
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
 import com.void01.bukkit.jerm.core.util.GermUtils
 
-class ButtonImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiButton) :
-    BaseComponent<GermGuiButton>(gui, parent, handle), Button {
+class ButtonImpl(
+    gui: Gui,
+    parent: JermComponentGroup<*>?,
+    handle: GermGuiButton
+) : BaseComponent<GermGuiButton>(gui, parent, handle), Button {
+    override var texturePath: String?
+        get() = handle.defaultPath
+        set(value) {
+            handle.defaultPath = value ?: GermUtils.EMPTY_TEXTURE_PATH
+        }
+    override var hoverTexturePath: String?
+        get() = handle.hoverPath
+        set(value) {
+            handle.hoverPath = value ?: GermUtils.EMPTY_TEXTURE_PATH
+        }
     override var texts: List<String>
         get() = handle.texts
         set(value) {
             handle.texts = value
         }
     private var germHandlersRegistered = false
+
     @Deprecated("弃用")
     override var onButtonClickListener: Button.OnClickListener? = null
         set(value) {

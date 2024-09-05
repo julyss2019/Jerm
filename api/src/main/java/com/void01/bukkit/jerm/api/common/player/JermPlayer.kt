@@ -1,5 +1,6 @@
 package com.void01.bukkit.jerm.api.common.player
 
+import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import org.bukkit.entity.Player
 
@@ -17,4 +18,8 @@ interface JermPlayer {
 
     @Deprecated(message = "Player 现在在 JermPlayer 生命周期内永远在线")
     fun getOnlineBukkitPlayer(): Player
+
+    fun getUsingGuiOrNull(handle: GermGuiScreen): Gui?
+
+    fun getUsingGui(handle: GermGuiScreen): Gui
 }

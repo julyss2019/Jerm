@@ -21,7 +21,11 @@ class AnimationManagerImpl(val plugin: JermPlugin) : AnimationManager {
 
     private val logger = plugin.pluginLogger
     private val animationMap = mutableMapOf<String, Animation>()
-    private var playNearByAnimationDistance = -1.0
+
+    /**
+     * 播放“附近”动画时附近观众距离表演者最大的判定距离
+     */
+    private var animationNearbyViewerMaxDistance = -1.0
     override val animations: List<Animation>
         get() = animationMap.values.toList()
 
@@ -50,7 +54,7 @@ class AnimationManagerImpl(val plugin: JermPlugin) : AnimationManager {
                 }
             }
 
-        this.playNearByAnimationDistance = yaml.getDouble("play-nearby-animation-distance")
+        this.animationNearbyViewerMaxDistance = yaml.getDouble("animation-nearby-viewer-max-distance")
 
         logger.info("载入了 ${animationMap.size} 个动画: ")
         animations.forEach {
@@ -91,7 +95,7 @@ class AnimationManagerImpl(val plugin: JermPlugin) : AnimationManager {
         playAnimation(
             performer,
             Bukkit.getOnlinePlayers()
-                .filter { it.location.distance(performer.location) <= playNearByAnimationDistance },
+                .filter { it.location.distance(performer.location) <= animationNearbyViewerMaxDistance },
             preparedAnimation.animationId,
             preparedAnimation.speed
         )

@@ -7,13 +7,13 @@ import com.void01.bukkit.jerm.api.common.gui.ComponentGroup
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
-import com.void01.bukkit.jerm.core.gui.HandleToComponentConverter
+import com.void01.bukkit.jerm.core.gui.GermHandleToComponentAdapter
 
 @Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
 abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     gui: Gui,
-    override val parent: JermComponentGroup<*>?,
-    override val handle: T,
+    parent: JermComponentGroup<*>?,
+    handle: T,
     private val containerHandle: IGuiPartContainer // 由于 IGuiPartContainer 跟 GermGuiPart 没有任何继承关系，故需要额外引用
 ) : BaseComponent<T>(gui, parent, handle), JermComponentGroup<T> {
     companion object {
@@ -60,14 +60,19 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     private val componentMap = mutableMapOf<String, Component<*>>()
 
     init {
-        // 载入组件
-        containerHandle.guiParts.forEach {
-            addComponent0(HandleToComponentConverter.convert(gui, this, it))
-        }
+        loadComponents()
     }
 
-    private fun addComponent0(component: Component<*>) {
-        componentMap[component.id] = component
+    private fun reloadComponents() {
+        componentMap.clear()
+        loadComponents()
+    }
+
+    private fun loadComponents() {
+        // 载入组件
+        containerHandle.guiParts.forEach {
+            addComponent0(GermHandleToComponentAdapter.adapt(gui, this, it))
+        }
     }
 
     override fun existsComponent(id: String): Boolean {
@@ -90,6 +95,10 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
         componentMap.remove(id)
     }
 
+    private fun addComponent0(component: Component<*>) {
+        componentMap[component.id] = component
+    }
+
     override fun addComponent(component: Component<*>) {
         require(!existsComponent(component.id)) {
             "Component already exists with id: ${component.id}"
@@ -100,7 +109,7 @@ abstract class BaseJermComponentGroup<T : GermGuiPart<*>>(
     }
 
     override fun addComponent(componentHandle: GermGuiPart<*>) {
-        addComponent(HandleToComponentConverter.convert(gui, this, componentHandle))
+        addComponent(GermHandleToComponentAdapter.adapt(gui, this, componentHandle))
     }
 
     override fun <T : Component<*>> getComponentByPath2(path: String, type: Class<T>): T {

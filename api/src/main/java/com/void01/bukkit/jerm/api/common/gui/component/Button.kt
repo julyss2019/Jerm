@@ -11,6 +11,8 @@ interface Button : Component<GermGuiButton> {
         fun onClick(event: ClickType, shift: Boolean)
     }
 
+    var texturePath: String?
+    var hoverTexturePath: String?
     var texts: List<String>
 
     @Deprecated(message = "弃用")

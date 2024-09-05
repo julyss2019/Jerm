@@ -4,9 +4,11 @@ import com.germ.germplugin.GermPlugin
 import com.germ.germplugin.api.dynamic.gui.GermGuiPart
 import org.bukkit.Bukkit
 import java.io.File
-import java.util.UUID
+import java.util.*
 
 object GermUtils {
+    const val EMPTY_TEXTURE_PATH = "local<->textures/misc/air.png"
+
     fun <T : GermGuiPart<*>> cloneGuiPart(guiPart: GermGuiPart<T>): T {
         return guiPart.clone().apply {
             setIndexName("${indexName}_clone_${UUID.randomUUID()}")
@@ -26,7 +28,20 @@ object GermUtils {
         return File(getRootDataFolder(), "gui")
     }
 
-    fun getAnimationFolder(): File {
-        return File(getRootDataFolder(), "bend")
+    fun getPath(germGuiPart: GermGuiPart<*>): String {
+        val list = mutableListOf<String>()
+
+        list.add(germGuiPart.indexName)
+
+        var parent: GermGuiPart<*>? = germGuiPart.parentPart
+
+        while (parent != null) {
+            list.add(0, parent.indexName)
+            parent = parent.parentPart
+        }
+
+        val path = list.joinToString(".")
+
+        return path
     }
 }
