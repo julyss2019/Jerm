@@ -7,12 +7,27 @@ import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.RootComponent
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.component.RootComponentImpl
-import com.void01.bukkit.jerm.core.player.JermPlayerImpl
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.io.File
 
 class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui {
-    var isOpened = false
+    companion object {
+        /**
+         * 检查玩家
+         *
+         * 由于萌芽打开 GUI 时不会对 Player 参数进行验证（离线、在线但非最新的玩家实例），这会造成 GUI 无法正常打开，且没任何提示
+         * 本方法对 Player 进行检查，在必要时抛出异常
+         */
+        private fun checkBukkitPlayer(bukkitPlayer: Player) {
+            val actualBukkitPlayer = Bukkit.getPlayer(bukkitPlayer.uniqueId)
+
+            require(actualBukkitPlayer != null) { "Player is offline" }
+            require(bukkitPlayer == actualBukkitPlayer) { "Player is invalid because it is not a latest Player instance" }
+        }
+    }
+
+    private val jermPlayerManager = plugin.jermPlayerManager
     override val id: String = handle.guiName
     override var onCloseListener: Gui.OnCloseListener? = null
     override var onOpenListener: Gui.OnOpenListener? = null
@@ -23,33 +38,35 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         set(value) {
             handle.isInvalid = !value
         }
+    var isOpening = false
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家
-     * @param cover 覆盖
+     * @param isCover 覆盖
      */
-    override fun openAsGui(bukkitPlayer: Player, cover: Boolean) {
-        (plugin.jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+    override fun openAsGui(bukkitPlayer: Player, isCover: Boolean) {
+        checkBukkitPlayer(bukkitPlayer)
+        jermPlayerManager.getJermPlayer(bukkitPlayer).addUsingGui(this)
 
-        if (cover) {
+        if (isCover) {
             handle.openGui(bukkitPlayer)
         } else {
             handle.openChildGui(bukkitPlayer)
         }
 
-        isOpened = true
+        this.isOpening = true
     }
 
     override fun openAsHud(bukkitPlayer: Player) {
-        (plugin.jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl).addUsingGui(this)
+        checkBukkitPlayer(bukkitPlayer)
+        jermPlayerManager.getJermPlayer(bukkitPlayer).addUsingGui(this)
         handle.openHud(bukkitPlayer)
-
-        isOpened = true
+        this.isOpening = true
     }
 
     override fun close() {
         handle.close()
-        isOpened = false
+        this.isOpening = false
     }
 
     // delegate

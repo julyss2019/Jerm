@@ -4,6 +4,7 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiScreen
 import com.germ.germplugin.api.event.gui.GermGuiClickEvent
 import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.RootComponent
+import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import org.bukkit.entity.Player
 
 interface Gui : Cloneable, ComponentGroup {
@@ -42,9 +43,15 @@ interface Gui : Cloneable, ComponentGroup {
         }
     }
 
+    fun openAsGui(jermPlayer: JermPlayer) = openAsGui(jermPlayer, true)
+
+    fun openAsGui(jermPlayer: JermPlayer, isCover: Boolean) = openAsGui(jermPlayer.bukkitPlayer, isCover)
+
+    fun openAsHud(jermPlayer: JermPlayer) = openAsHud(jermPlayer.bukkitPlayer)
+
     fun openAsGui(bukkitPlayer: Player) = openAsGui(bukkitPlayer, true)
 
-    fun openAsGui(bukkitPlayer: Player, cover: Boolean)
+    fun openAsGui(bukkitPlayer: Player, isCover: Boolean)
 
     fun openAsHud(bukkitPlayer: Player)
 

@@ -1,6 +1,5 @@
 package com.void01.bukkit.jerm.core.player
 
-import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
 import com.void01.bukkit.jerm.core.JermPlugin
 import org.bukkit.Bukkit
@@ -19,12 +18,12 @@ class JermPlayerManagerImpl(private val plugin: JermPlugin) : JermPlayerManager 
         return jermPlayerMap.containsKey(bukkitPlayer.uniqueId)
     }
 
-    override fun getJermPlayer(playerName: String): JermPlayer {
+    override fun getJermPlayer(playerName: String): JermPlayerImpl {
         @Suppress("DEPRECATION")
         return getJermPlayer(Bukkit.getPlayer(playerName) ?: throw IllegalArgumentException("Player is offline"))
     }
 
-    override fun getJermPlayer(bukkitPlayer: Player): JermPlayer {
+    override fun getJermPlayer(bukkitPlayer: Player): JermPlayerImpl {
         require(bukkitPlayer.isOnline) { "Player is offline" }
 
         val uuid = bukkitPlayer.uniqueId

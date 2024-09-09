@@ -14,8 +14,8 @@ import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
-import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import com.void01.bukkit.jerm.core.util.MessageUtils
+import com.void01.bukkit.voidframework.common.kotlin.nameWithUuid2
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -109,7 +109,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             val germEventType = event.eventType
             val clickType = parseClickType(event.eventType) ?: return
             val isShift = parseIsShiftClick(germEventType)
-            val jermPlayer = jermPlayerManager.getJermPlayer(event.player) as JermPlayerImpl
+            val jermPlayer = jermPlayerManager.getJermPlayer(event.player)
             val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
             val itemSlot = findComponent(usingGui, event.germGuiSlot) as ItemSlot
 
@@ -119,7 +119,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
 
             fireClickListener(itemSlot, clickType, isShift, event)
         } catch (ex: Exception) {
-            MessageUtils.sendMessage(event.player, "发生了致命性错误.")
+            MessageUtils.sendMessage(event.player, "&c发生了致命性错误.")
             event.isCancelled = true // 防止出现意外，造成物品随便拿
             throw RuntimeException(ex)
         }
@@ -136,7 +136,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         }
 
         val germEventType = event.eventType
-        val jermPlayer = jermPlayerManager.getJermPlayer(event.player) as JermPlayerImpl
+        val jermPlayer = jermPlayerManager.getJermPlayer(event.player)
         val clickType = parseClickType(event.eventType) ?: return
         val isShift = parseIsShiftClick(germEventType)
         val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
@@ -150,14 +150,14 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     fun onGuiClick(event: GermGuiClickEvent) {
         val germEventType = event.clickType
         val bukkitPlayer = event.player
-        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl
+        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer)
         val guiHandle = event.clickedGuiScreen
         val usingGui = jermPlayer.getUsingGuiOrNull(guiHandle) as GuiImpl? ?: return
         val isClickDown = !germEventType.name.endsWith("RELEASE")
         val clickType = parseClickType(germEventType) ?: return
         var tmp = event.clickedPart
 
-        // Bug: 萌芽松开在某些情况下可能会穿透
+        // ?Fix: 萌芽松开在某些情况下可能会穿透
         // 传递给所有父组件
         while (tmp != null) {
             val component = findComponent(usingGui, tmp)
@@ -182,13 +182,16 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player
 
-        // Fix: 疑似萌芽 Bug，掉线后还会触发 GUI 打开事件
+        // Fix: 掉线后还有概率触发 GUI 打开事件
         if (!bukkitPlayer.isOnline) {
+            plugin.pluginLogger.debug("Gui '${handle.guiName} opened, but player '${bukkitPlayer.nameWithUuid2}' is offline'")
             return
         }
 
-        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl
-        val gui: Gui
+        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer)
+        val gui: GuiImpl
+
+        jermPlayer.debug("Gui '${handle.guiName}' opened")
 
         // 这里仅处理没有使用 Jerm 打开的 GUI，将为其手动实例化一个 GUI
         if (jermPlayer.getUsingGuiOrNull(handle) == null) {
@@ -199,7 +202,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             gui = jermPlayer.getUsingGuiOrNull(handle)!! as GuiImpl
 
             // Fix: 修复萌芽 GUI 打开后秒关可能无法关闭的问题
-            if (!gui.isOpened) {
+            if (!gui.isOpening) {
                 gui.close()
                 return
             }
@@ -214,11 +217,12 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     fun onClose(event: GermGuiClosedEvent) {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player
-        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer) as JermPlayerImpl
+        val jermPlayer = jermPlayerManager.getJermPlayer(bukkitPlayer)
         val usingGui = jermPlayer.getUsingGuiOrNull(handle)
 
         usingGui?.onCloseListener?.onClose()
-        jermPlayer.removeUsingGui(event.germGuiScreen)
+        jermPlayer.debug("Gui '${handle.guiName}' closed")
+        jermPlayer.removeUsingGui(handle)
 
         if (usingGui != null) {
             Bukkit.getPluginManager().callEvent(GuiCloseEvent(jermPlayer, usingGui))

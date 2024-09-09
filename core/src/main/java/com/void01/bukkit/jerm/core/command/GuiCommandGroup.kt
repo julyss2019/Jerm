@@ -7,7 +7,6 @@ import com.github.julyss2019.bukkit.voidframework.command.annotation.CommandPara
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.player.JermPlayer
-import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
@@ -18,20 +17,14 @@ import org.bukkit.entity.Player
 
 @CommandMapping(value = "gui")
 class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
-    private val jermPlayerManager: JermPlayerManager = plugin.jermPlayerManager
     private val guiManager: GuiManager = plugin.guiManager
 
-    @CommandBody(value = "queryHierarchy", description = "查看 GUI 层级关系")
-    fun query(sender: CommandSender, @CommandParam(description = "GUI") gui: Gui) {
+    @CommandBody(value = "queryGuiHierarchy", description = "查看 GUI 层级关系")
+    fun queryGuiHierarchy(sender: CommandSender, @CommandParam(description = "GUI") gui: Gui) {
         MessageUtils.sendMessage(sender, gui.getHierarchyString())
     }
 
-    @CommandBody(value = "test", description = "test")
-    fun test(sender: CommandSender, @CommandParam(description = "GUI") gui: Gui) {
-        MessageUtils.sendMessage(sender, gui.components.map { it.id }.joinToString(", "))
-    }
-
-    @CommandBody(value = "listGUIs", description = "列出所有 GUI")
+    @CommandBody(value = "listGuis", description = "列出所有 GUI")
     fun list(
         sender: CommandSender,
         @CommandParam(description = "是否显示详情(false)", optional = true) detail: Boolean?
@@ -65,8 +58,8 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
             }
     }
 
-    @CommandBody(value = "listUsingGUIs", description = "列出玩家所有正在使用的 GUI")
-    fun getAllUsingGui(sender: CommandSender, @CommandParam(description = "玩家") jermPlayer: JermPlayer) {
+    @CommandBody(value = "listUsingGuis", description = "列出玩家所有正在使用的 GUI")
+    fun listUsingGuis(sender: CommandSender, @CommandParam(description = "玩家") jermPlayer: JermPlayer) {
         val usingGuis = jermPlayer.getUsingGuis()
 
         MessageUtils.sendMessage(sender, "玩家正在使用 ${usingGuis.size} 个 GUI: ")
@@ -75,8 +68,8 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
         }
     }
 
-    @CommandBody(value = "openAsHUD", description = "为玩家打开 HUD")
-    fun openHud(
+    @CommandBody(value = "openAsHud", description = "为玩家打开 HUD")
+    fun openAsHud(
         sender: CommandSender,
         @CommandParam(description = "GUI") gui: Gui,
         @CommandParam(description = "玩家名(Player: 自己)", optional = true) player: Player?,
@@ -90,8 +83,8 @@ class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
         }
     }
 
-    @CommandBody(value = "openAsGUI", description = "为玩家打开 GUI")
-    fun open(
+    @CommandBody(value = "openAsGui", description = "为玩家打开 GUI")
+    fun openAsGui(
         sender: CommandSender,
         @CommandParam(description = "GUI") gui: Gui,
         @CommandParam(description = "玩家名(Player: 自己)", optional = true) player: Player?,

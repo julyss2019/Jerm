@@ -2,7 +2,6 @@ package com.void01.bukkit.jerm.core.listener
 
 import com.germ.germplugin.api.event.gui.GermGuiClickEvent
 import com.void01.bukkit.jerm.core.JermPlugin
-import com.void01.bukkit.jerm.core.player.JermPlayerImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -10,7 +9,7 @@ import org.bukkit.event.Listener
 class GuiDebugListener(private val plugin: JermPlugin) : Listener {
     @EventHandler
     fun onGermGuiClickEvent(event: GermGuiClickEvent) {
-        val jermPlayer = plugin.jermPlayerManager.getJermPlayer(event.player) as JermPlayerImpl
+        val jermPlayer = plugin.jermPlayerManager.getJermPlayer(event.player)
         val guiHandle = event.clickedGuiScreen
         val componentHandle = event.clickedPart
         val sb = StringBuilder()

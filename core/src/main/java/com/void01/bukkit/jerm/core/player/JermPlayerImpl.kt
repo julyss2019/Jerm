@@ -5,7 +5,6 @@ import com.germ.germplugin.api.dynamic.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.player.JermPlayer
 import com.void01.bukkit.jerm.core.JermPlugin
-import com.void01.bukkit.voidframework.common.kotlin.getNameWithUuid
 import org.bukkit.entity.Player
 
 class JermPlayerImpl(override val bukkitPlayer: Player, val plugin: JermPlugin) : JermPlayer {
@@ -16,7 +15,7 @@ class JermPlayerImpl(override val bukkitPlayer: Player, val plugin: JermPlugin) 
     }
 
     override fun getUsingGuiOrNull(handle: GermGuiScreen): Gui? {
-        return usingGuis.firstOrNull { it.handle == handle }
+        return usingGuis.firstOrNull { it.handle === handle }
     }
 
     fun addUsingGui(gui: Gui) {
@@ -25,7 +24,7 @@ class JermPlayerImpl(override val bukkitPlayer: Player, val plugin: JermPlugin) 
 
     fun removeUsingGui(handle: GermGuiScreen) {
         usingGuis.removeIf {
-            it.handle == handle
+            it.handle === handle
         }
     }
 
@@ -48,7 +47,7 @@ class JermPlayerImpl(override val bukkitPlayer: Player, val plugin: JermPlugin) 
     }
 
     fun debug(message: String) {
-        plugin.pluginLogger.debug("[${bukkitPlayer.getNameWithUuid()}] $message")
+        plugin.pluginLogger.debug("[${bukkitPlayer.name}] $message")
     }
 
     @Suppress("DeprecatedCallableAddReplaceWith")

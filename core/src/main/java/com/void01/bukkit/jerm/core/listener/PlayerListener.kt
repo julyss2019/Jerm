@@ -1,7 +1,6 @@
 package com.void01.bukkit.jerm.core.listener
 
 import com.void01.bukkit.jerm.core.JermPlugin
-import com.void01.bukkit.jerm.core.player.JermPlayerManagerImpl
 import com.void01.bukkit.voidframework.common.kotlin.toColored
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -9,7 +8,7 @@ import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerListener(private val plugin: JermPlugin) : Listener {
-    private val jermPlayerManager = plugin.jermPlayerManager as JermPlayerManagerImpl
+    private val jermPlayerManager = plugin.jermPlayerManager
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {

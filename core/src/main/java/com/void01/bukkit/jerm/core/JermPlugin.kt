@@ -7,7 +7,6 @@ import com.void01.bukkit.jerm.api.common.Jerm2
 import com.void01.bukkit.jerm.api.common.animation.AnimationManager
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.GuiParser
-import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
 import com.void01.bukkit.jerm.api.internal.Context
 import com.void01.bukkit.jerm.core.animation.AnimationManagerImpl
 import com.void01.bukkit.jerm.core.command.AnimationCommandGroup
@@ -36,7 +35,7 @@ class JermPlugin : VoidPlugin(), Context {
             private set
     }
 
-    override lateinit var jermPlayerManager: JermPlayerManager
+    override lateinit var jermPlayerManager: JermPlayerManagerImpl
         private set
     override lateinit var animationManager: AnimationManager
         private set
