@@ -63,7 +63,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             return null
         }
 
-        private fun findComponent(usingGui: Gui, clickedComponentHandle: GermGuiPart<*>): Component<*> {
+        private fun findComponent(usingGui: Gui, clickedComponentHandle: GermGuiPart<*>): Component<*>? {
             val componentNodes = Stack<GermGuiPart<*>>()
             var currentComponentHandle: GermGuiPart<*> = clickedComponentHandle
 
@@ -81,7 +81,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
                 val tmp = (currentComponent as ComponentGroup).getComponent2OrNull(pop.indexName, Component::class.java)
 
                 currentComponent =
-                    tmp ?: currentComponent.getPseudoComponentOrThrow(pop.indexName, Component::class.java) // 伪部件（滚动条）
+                    tmp ?: currentComponent.getPseudoComponent(pop.indexName, Component::class.java) // 伪部件（滚动条）
             }
 
             return currentComponent!!
@@ -141,7 +141,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         val clickType = parseClickType(event.eventType) ?: return
         val isShift = parseIsShiftClick(germEventType)
         val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
-        val button = findComponent(usingGui, event.germGuiButton)
+        val button = findComponent(usingGui, event.germGuiButton) ?: return
 
         fireClickListener(button, clickType, isShift, event)
     }
@@ -161,7 +161,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
         // ?Fix: 萌芽松开在某些情况下可能会穿透
         // 传递给所有父组件
         while (tmp != null) {
-            val component = findComponent(usingGui, tmp)
+            val component = findComponent(usingGui, tmp) ?: return
 
             if (isClickDown) {
                 usingGui.onGuiClickListener?.onClickDown(component, clickType, event)
