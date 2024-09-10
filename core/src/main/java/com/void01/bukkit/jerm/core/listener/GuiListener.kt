@@ -14,6 +14,7 @@ import com.void01.bukkit.jerm.api.common.gui.component.Component
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.core.JermPlugin
 import com.void01.bukkit.jerm.core.gui.GuiImpl
+import com.void01.bukkit.jerm.core.gui.component.CheckBoxImpl
 import com.void01.bukkit.jerm.core.util.MessageUtils
 import com.void01.bukkit.voidframework.common.kotlin.nameWithUuid2
 import org.bukkit.Bukkit
