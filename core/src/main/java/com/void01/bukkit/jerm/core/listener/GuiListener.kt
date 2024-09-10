@@ -214,6 +214,17 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
     }
 
     @EventHandler
+    fun onGermGuiCheckboxEvent(event: GermGuiCheckboxEvent) {
+        val germGuiCheckbox = event.germGuiCheckbox
+        val jermPlayer = jermPlayerManager.getJermPlayer(event.player)
+        val usingGui = jermPlayer.getUsingGuiOrNull(event.germGuiScreen) ?: return
+
+        (findComponent(usingGui, germGuiCheckbox) as CheckBoxImpl?)?.onCheckedChangeListener?.onCheckedChanged(
+            germGuiCheckbox.isChecked
+        )
+    }
+
+    @EventHandler
     fun onClose(event: GermGuiClosedEvent) {
         val handle = event.germGuiScreen
         val bukkitPlayer = event.player

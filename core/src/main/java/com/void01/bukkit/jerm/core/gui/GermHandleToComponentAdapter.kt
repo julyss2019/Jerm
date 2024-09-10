@@ -16,6 +16,7 @@ object GermHandleToComponentAdapter {
             GermGuiCanvas::class.java -> CanvasImpl(gui, parent, handle as GermGuiCanvas)
             GermGuiTexture::class.java -> TextureImpl(gui, parent, handle as GermGuiTexture)
             GermGuiInput::class.java -> InputImpl(gui, parent, handle as GermGuiInput)
+            GermGuiCheckbox::class.java -> CheckBoxImpl(gui, parent, handle as GermGuiCheckbox)
             else -> {
                 UnsupportedComponent(gui, parent, handle)
             }
