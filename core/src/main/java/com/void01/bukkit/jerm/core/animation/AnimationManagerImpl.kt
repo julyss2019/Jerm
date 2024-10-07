@@ -56,10 +56,7 @@ class AnimationManagerImpl(val plugin: JermPlugin) : AnimationManager {
 
         this.animationNearbyViewerMaxDistance = yaml.getDouble("animation-nearby-viewer-max-distance")
 
-        logger.info("载入了 ${animationMap.size} 个动画: ")
-        animations.forEach {
-            logger.info("- ${it.id}")
-        }
+        logger.info("${animationMap.size} animation(s) loaded")
     }
 
     override fun getAnimationLength(id: String): Double {
