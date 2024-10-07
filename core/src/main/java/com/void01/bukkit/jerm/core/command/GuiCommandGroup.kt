@@ -19,6 +19,18 @@ import org.bukkit.entity.Player
 class GuiCommandGroup(plugin: JermPlugin) : CommandGroup {
     private val guiManager: GuiManager = plugin.guiManager
 
+    @CommandBody(value = "queryPlayer", description = "查询玩家")
+    fun queryPlayer(sender: CommandSender, @CommandParam(description = "玩家") jermPlayer: JermPlayer) {
+        val bukkitPlayer = jermPlayer.bukkitPlayer
+
+        MessageUtils.sendMessage(
+            sender,
+            "width: ${com.germ.germplugin.api.dynamic.gui.GuiManager.getMCWidth(bukkitPlayer)}, height: ${
+                com.germ.germplugin.api.dynamic.gui.GuiManager.getMCHeight(bukkitPlayer)
+            }"
+        )
+    }
+
     @CommandBody(value = "queryGuiHierarchy", description = "查看 GUI 层级关系")
     fun queryGuiHierarchy(sender: CommandSender, @CommandParam(description = "GUI") gui: Gui) {
         MessageUtils.sendMessage(sender, gui.getHierarchyString())
