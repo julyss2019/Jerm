@@ -32,6 +32,7 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
             .walk()
             .filter { it.isFile }
             .filter { it.name.endsWith(".yml") }
+            .filterNot { it.name == "default.yml" }
             .flatMap {
                 try {
                     logger.info("开始解析 GUI: ${it.absolutePath}")
