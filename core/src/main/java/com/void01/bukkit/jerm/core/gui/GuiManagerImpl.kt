@@ -35,20 +35,16 @@ class GuiManagerImpl(private val plugin: JermPlugin) : GuiManager {
             .filterNot { it.name == "default.yml" }
             .flatMap {
                 try {
-                    logger.info("开始解析 GUI: ${it.absolutePath}")
+                    logger.debug("Parsing GUI: ${it.absolutePath}")
                     guiParser.parseGuis(it)
                 } catch (ex: Exception) { // 萌芽似乎直接打印了异常，导致捕捉失败
-                    throw RuntimeException("在载入 ${it.absolutePath} 时出现了异常", ex)
+                    throw RuntimeException("An exception occurred while parsing '${it.absolutePath}'", ex)
                 }
             }
             .forEach {
                 guiMap[it.id] = it
             }
-
-        logger.info("载入了 " + guiMap.size + " 个 GUI: ")
-        getGuis().forEach {
-            logger.info("- ${it.id}")
-        }
+        logger.info("${guiMap.size} GUI(s) loaded")
     }
 
     override fun existsGui(id: String): Boolean {
