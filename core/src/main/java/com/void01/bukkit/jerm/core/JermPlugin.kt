@@ -7,7 +7,7 @@ import com.void01.bukkit.jerm.api.common.Jerm2
 import com.void01.bukkit.jerm.api.common.animation.AnimationManager
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.GuiParser
-import com.void01.bukkit.jerm.api.internal.Context
+import com.void01.bukkit.jerm.api.internal.Delegate
 import com.void01.bukkit.jerm.core.animation.AnimationManagerImpl
 import com.void01.bukkit.jerm.core.command.AnimationCommandGroup
 import com.void01.bukkit.jerm.core.command.GuiCommandGroup
@@ -28,7 +28,7 @@ import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 
 @CommandMapping(value = "jerm", permission = "jerm.admin")
-class JermPlugin : VoidPlugin(), Context {
+class JermPlugin : VoidPlugin(), Delegate {
     companion object {
         @JvmStatic
         lateinit var instance: JermPlugin

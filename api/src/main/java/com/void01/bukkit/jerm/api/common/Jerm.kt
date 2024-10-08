@@ -4,32 +4,32 @@ import com.void01.bukkit.jerm.api.common.animation.AnimationManager
 import com.void01.bukkit.jerm.api.common.gui.GuiManager
 import com.void01.bukkit.jerm.api.common.gui.GuiParser
 import com.void01.bukkit.jerm.api.common.player.JermPlayerManager
-import com.void01.bukkit.jerm.api.internal.Context
+import com.void01.bukkit.jerm.api.internal.Delegate
 
 object Jerm {
-    private lateinit var context: Context
+    private lateinit var delegate: Delegate
 
-    fun setContext(context: Context) {
-        if (Jerm::context.isInitialized) {
+    fun setContext(delegate: Delegate) {
+        if (Jerm::delegate.isInitialized) {
             throw UnsupportedOperationException()
         }
 
-        Jerm.context = context
+        Jerm.delegate = delegate
     }
 
     fun getAnimationManager(): AnimationManager {
-        return context.animationManager
+        return delegate.animationManager
     }
 
     fun getGuiManager(): GuiManager {
-        return context.guiManager
+        return delegate.guiManager
     }
 
     fun getPlayerManager(): JermPlayerManager {
-        return context.jermPlayerManager
+        return delegate.jermPlayerManager
     }
 
     fun getGuiParser(): GuiParser {
-        return context.guiParser
+        return delegate.guiParser
     }
 }
