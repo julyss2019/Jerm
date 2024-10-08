@@ -199,6 +199,7 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
             gui = GuiImpl(handle, null, plugin)
 
             jermPlayer.addUsingGui(gui)
+            gui.isExternal = true
         } else {
             gui = jermPlayer.getUsingGuiOrNull(handle)!! as GuiImpl
 

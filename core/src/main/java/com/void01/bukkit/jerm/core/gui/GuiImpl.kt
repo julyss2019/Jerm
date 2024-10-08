@@ -40,6 +40,12 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
         }
     var isOpening = false
 
+    /**
+     * 表示这个 GUI 不是通过 Jerm 打开的.
+     *
+     */
+    var isExternal = true
+
     /** 打开 GUI
      * @param bukkitPlayer 玩家
      * @param isCover 覆盖

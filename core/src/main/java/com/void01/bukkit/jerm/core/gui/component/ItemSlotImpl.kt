@@ -4,6 +4,7 @@ import com.germ.germplugin.api.dynamic.gui.GermGuiSlot
 import com.void01.bukkit.jerm.api.common.gui.Gui
 import com.void01.bukkit.jerm.api.common.gui.component.ItemSlot
 import com.void01.bukkit.jerm.api.common.gui.component.JermComponentGroup
+import com.void01.bukkit.jerm.core.gui.GuiImpl
 import com.void01.bukkit.jerm.core.util.GermUtils
 import org.bukkit.inventory.ItemStack
 import java.util.*
@@ -42,7 +43,8 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         }
 
     init {
-        if (binding == id) {
+        gui as GuiImpl
+        if (!gui.isExternal) {
             // Germ fix: 修复一个 canvas 内多个 slot 使用同一个 binding 导致所有物品都一样的 bug
             binding = "jerm-patch-${UUID.randomUUID()}"
         }
