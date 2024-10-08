@@ -99,4 +99,16 @@ class JermPlugin : VoidPlugin(), Context {
         (guiManager as GuiManagerImpl).reload()
         (animationManager as AnimationManagerImpl).reload()
     }
+
+    override fun debug(message: String) {
+        pluginLogger.debug(message)
+    }
+
+    override fun info(message: String) {
+        pluginLogger.info(message)
+    }
+
+    override fun warn(message: String) {
+        pluginLogger.warn(message)
+    }
 }

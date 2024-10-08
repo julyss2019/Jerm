@@ -10,4 +10,10 @@ interface Context {
     val guiManager: GuiManager
     val jermPlayerManager: JermPlayerManager
     val animationManager: AnimationManager
+
+    fun debug(message: String)
+
+    fun info(message: String)
+
+    fun warn(message: String)
 }

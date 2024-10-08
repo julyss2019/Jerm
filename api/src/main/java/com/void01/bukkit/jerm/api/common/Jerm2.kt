@@ -21,6 +21,18 @@ object Jerm2 {
     @JvmStatic
     val guiParser: GuiParser get() = context.guiParser
 
+    fun debug(message: String) {
+        context.debug(message)
+    }
+
+    fun info(message: String) {
+        context.info(message)
+    }
+
+    fun warn(message: String) {
+        context.warn(message)
+    }
+
     fun setContext(context: Context) {
         if (Jerm2::context.isInitialized) {
             throw UnsupportedOperationException()
