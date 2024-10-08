@@ -16,10 +16,10 @@ class GuiImpl(
     val sourceFile: File? = null,
     val plugin: JermPlugin,
     /**
-     * 表示这个 GUI 不是通过 Jerm 打开的.
+     * 表示这个 GUI 是不是通过 Jerm 打开的.
      *
      */
-    val isExternal: Boolean = false
+    val isOpenedByJerm: Boolean = false
 ) : Gui {
     companion object {
         /**
