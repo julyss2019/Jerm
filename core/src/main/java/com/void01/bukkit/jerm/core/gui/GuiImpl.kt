@@ -11,7 +11,16 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.io.File
 
-class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, val plugin: JermPlugin) : Gui {
+class GuiImpl(
+    override val handle: GermGuiScreen,
+    val sourceFile: File? = null,
+    val plugin: JermPlugin,
+    /**
+     * 表示这个 GUI 不是通过 Jerm 打开的.
+     *
+     */
+    val isExternal: Boolean = false
+) : Gui {
     companion object {
         /**
          * 检查玩家
@@ -39,12 +48,6 @@ class GuiImpl(override val handle: GermGuiScreen, val sourceFile: File? = null, 
             handle.isInvalid = !value
         }
     var isOpening = false
-
-    /**
-     * 表示这个 GUI 不是通过 Jerm 打开的.
-     *
-     */
-    var isExternal = false
 
     /** 打开 GUI
      * @param bukkitPlayer 玩家

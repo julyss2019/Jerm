@@ -196,10 +196,9 @@ class GuiListener(private val plugin: JermPlugin) : Listener {
 
         // 这里仅处理没有使用 Jerm 打开的 GUI，将为其手动实例化一个 GUI
         if (jermPlayer.getUsingGuiOrNull(handle) == null) {
-            gui = GuiImpl(handle, null, plugin)
+            gui = GuiImpl(handle, null, plugin, true)
 
             jermPlayer.addUsingGui(gui)
-            gui.isExternal = true
         } else {
             gui = jermPlayer.getUsingGuiOrNull(handle)!! as GuiImpl
 
