@@ -6,7 +6,6 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifactId 'jerm-api'
-            version 'latest'
             from components.java
         }
     }
