@@ -46,8 +46,8 @@ class ItemSlotImpl(gui: Gui, parent: JermComponentGroup<*>?, handle: GermGuiSlot
         gui as GuiImpl
 
         // Germ fix: 修复一个 canvas 内多个 slot 使用同一个 binding 导致所有物品都一样的 bug
-        // 仅在 GUI 是通过 Jerm 打开的, 且 binding == id 时修改
-        if (!gui.isOpenedByJerm && binding == id) {
+        // 仅修改使用 Jerm 打开的 GUI
+        if (!gui.isOpenedByJerm) {
             this.binding = "Jerm-${UUID.randomUUID()}"
         }
     }
